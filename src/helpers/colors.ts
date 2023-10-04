@@ -20,4 +20,9 @@ export const Colors = {
     Black: 'black',
     Background: '#FDFDFD', 
     LightGrey: 'lightgrey',
+    AdsCardPagination: "#fea0b0",
+    DealofthDay: '#4392F9',
+    TrendyProducts: '#FD6E87',
+    Visitnow: '#F83758',
+    ShoppingSwipe: '#BBBBBB',
 }

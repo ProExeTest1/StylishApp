@@ -6,5 +6,9 @@ export const Images = {
     make_payment: require('../assets/images/make_payment.png'),
     smartphone: require('../assets/images/smartphone.png'),
     email: require('../assets/images/gmail.png'),
+    FeaturesImage: require('../assets/images/FeaturesImage.png'),
+    AdsCard: require('../assets/images/AdsCard.png'),
+    ShoppingCard: require('../assets/images/ShoppingCard.png'),
+    TrendingProducts: require('../assets/images/TrendingProducts.png'),
     // user_icon: userIcon,
 }
