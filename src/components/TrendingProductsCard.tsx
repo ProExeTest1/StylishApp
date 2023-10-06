@@ -13,35 +13,44 @@ import Search from '../assets/SVGs/Search.svg';
 import Mic from '../assets/SVGs/Mic.svg';
 import {Images} from '../helpers/images';
 import {FeatureType, ShoppingCardType} from '../helpers/appData';
+import {Products} from '../helpers/interface';
 
 interface TrendingProductsCardProps {
-  Data?: Array<ShoppingCardType>;
+  Data?: Array<Products>;
 }
 
 const TrendingProductsCard = (props: TrendingProductsCardProps) => {
   const [index, setIndex] = useState(2);
+  const [swipeIcon, setSwipeIcon] = useState('>');
   const flatListRef = useRef<FlatList>(null);
 
   const ShoppingSwipe = () => {
-    if (index < props?.Data?.length) {
+    if (index < props.Data?.filter((item, index) => index < 4)?.length) {
       setIndex(index + 2);
+      if (index + 2 >= props.Data?.filter((item, index) => index < 4)?.length)
+        setSwipeIcon('<');
       flatListRef?.current?.scrollToIndex({index: index});
     } else {
       setIndex(2);
+      setSwipeIcon('>');
       flatListRef?.current?.scrollToIndex({index: 0});
     }
   };
 
-  const renderItem = ({item}: {item: ShoppingCardType}) => {
+  const renderItem = ({item}: {item: Products}) => {
     return (
       <View style={styles.renderItemContainer}>
-        <Image source={item.Image} style={styles.TrendingProductsCardImage} />
-        <Text style={styles.TitleText}>{item.Title}</Text>
+        <Image
+          source={{uri: item.image}}
+          style={styles.TrendingProductsCardImage}
+          resizeMode="contain"
+        />
+        <Text style={styles.TitleText}>{item.title}</Text>
         {/* <Text style={styles.DescText}>{item.Desc}</Text> */}
-        <Text style={styles.PriceText}>₹{item.Price}</Text>
+        <Text style={styles.PriceText}>${item.price}</Text>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.MRPText}>₹{item.MRP}</Text>
-          <Text style={styles.DiscountText}>{item.Discount}%Off</Text>
+          {/* <Text style={styles.MRPText}>₹{item.MRP}</Text> */}
+          {/* <Text style={styles.DiscountText}>{item.Discount}%Off</Text> */}
         </View>
         {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={styles.Rating}>⭐⭐⭐⭐⭐</Text>
@@ -56,7 +65,7 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={props.Data}
+        data={props.Data?.filter((item, index) => index < 4)}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         contentContainerStyle={styles.FlatListStyle}
@@ -65,7 +74,7 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
         ref={flatListRef}
       />
       <TouchableOpacity style={styles.Button} onPress={ShoppingSwipe}>
-        <Text>{'>'}</Text>
+        <Text>{swipeIcon}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -100,7 +109,7 @@ const styles = StyleSheet.create({
     // textAlign: 'center',
     fontWeight: '400',
     fontSize: fs(12),
-    marginTop: hp(2),
+    marginTop: hp(5),
     color: Colors.Black,
     width: wp(134),
   },
@@ -119,7 +128,7 @@ const styles = StyleSheet.create({
     // textAlign: 'center',
     fontWeight: '500',
     fontSize: fs(12),
-    // marginTop: hp(2),
+    marginTop: hp(5),
     color: Colors.Black,
   },
   MRPText: {

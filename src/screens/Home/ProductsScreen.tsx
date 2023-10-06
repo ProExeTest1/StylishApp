@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   Text,
   View,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Pressable,
+  Image,
 } from 'react-native';
 import ScreenTemplate from '../../components/ScreenTemplate';
 import DrawerIcon from '../../assets/SVGs/DrawerIcon.svg';
@@ -17,79 +18,101 @@ import {Colors} from '../../helpers/colors';
 import FilterIcon from '../../assets/SVGs/FilterIcon.svg';
 import SortIcon from '../../assets/SVGs/SortIcon.svg';
 import FeaturesComponent from '../../components/FeaturesComponent';
-import {
-  AdsCardsData,
-  FearuresData,
-  ShoppingCardData,
-  TrendingProductsData,
-} from '../../helpers/appData';
-import AdsCard from '../../components/AdsCard';
-import RightArrow from '../../assets/SVGs/RightArrow.svg';
-import ShoppingCard from '../../components/ShoppingCard';
-import SpecialOfferImage from '../../assets/SVGs/SpecialOfferImage.svg';
-import Heels from '../../assets/SVGs/HeelsImage/Heels.svg';
-import Rectangle from '../../assets/SVGs/HeelsImage/Rectangle.svg';
-import GroupStars from '../../assets/SVGs/HeelsImage/GroupStars.svg';
-import TrendingProductsCard from '../../components/TrendingProductsCard';
-import HotSummerSale from '../../assets/SVGs/HotSummerSale.svg';
-import Sponsered from '../../assets/SVGs/Sponsered.svg';
-import axios from 'axios';
+
 import {setProducts} from '../../Store/Reducer';
 import {useDispatch, useSelector} from 'react-redux';
 import {Products} from '../../helpers/interface';
 import {ScrollView} from 'react-native-gesture-handler';
-import {useNavigation} from '@react-navigation/native';
+import ProductsList from '../../components/ProductsList';
+import {useRoute} from '@react-navigation/native';
+import ReactNativeModal from 'react-native-modal';
+import {Images} from '../../helpers/images';
+import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
+import {radioButtons} from '../../helpers/appData';
 
-const baseUrl = 'https://fakestoreapi.com/products';
-interface HomeProps {}
+const baseUrl = 'https://fakestoreapi.com/ProductsScreen';
+interface ProductsScreenProps {}
 
-const Home = (props: HomeProps) => {
+const ProductsScreen = (props: ProductsScreenProps) => {
   const [data, setData] = useState([]);
+  const [data2, setData2] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [filterData, setFilterData] = useState([]);
+  const [filterModel, setFilterModel] = useState(false);
+  const [selectedRadioId, setSelectedRadioId] = useState<string | undefined>();
   const dispatch = useDispatch();
   const stateData = useSelector(state => state.Reducers);
-  const navigation = useNavigation();
-  const today = new Date();
-  const yesterday = new Date(today.setDate(today.getDate() - 1));
+  const route = useRoute();
+  const category = route.params.category;
+  const [search, setSearch] = useState('');
 
-  const handleDOD = category => {
-    navigation.navigate('ProductsScreen', {category: category});
-  };
+  console.log('selectedRadioId------------', selectedRadioId);
 
   useEffect(() => {
-    axios({
-      method: 'get',
-      url: baseUrl,
-    }).then(response => {
-      console.log(response.data);
-    });
+    console.log('Products---------------------', stateData.products);
 
-    axios.get(baseUrl).then(response => {
-      console.log(
-        ' ---------------------------------- Response.Data-----\n ',
-        response.data,
-      );
-      dispatch(setProducts(response.data));
-      setData(response.data);
-      setCategoryData(response.data);
-      const ids = response.data.map(({category}: Products) => category);
-      const tempData = response.data.filter(
-        ({category}: Products, index: number) => {
-          return !ids.includes(category, index + 1);
-        },
-      );
+    setData(stateData.products);
+    setData2(stateData.products);
 
-      console.log('--------------------tempData', tempData);
+    setCategoryData(stateData.products);
+    const ids = stateData.products.map(({category}: Products) => category);
+    const tempData = stateData.products.filter(
+      ({category}: Products, index: number) => {
+        return !ids.includes(category, index + 1);
+      },
+    );
 
-      // setFilterData([{ category: 'View All' }, ...tempData]);
-      setFilterData(tempData);
+    console.log('--------------------tempData', tempData);
 
-      // const ids = books.map(({ title }) => title);
-      //     const filtered = books.filter(({ title }, index) =>
-      // !ids.includes(title, index + 1));
-    });
+    // setFilterData([{ category: 'View All' }, ...tempData]);
+    setFilterData(tempData);
+
+    // const ids = books.map(({ title }) => title);
+    //     const filtered = books.filter(({ title }, index) =>
+    // !ids.includes(title, index + 1));
   }, []);
+
+  const handleSort = () => {
+    setFilterModel(true);
+  };
+
+  const handleRadio = (id: string) => {
+    setSelectedRadioId(id);
+    setFilterModel(!filterModel);
+
+    if (id == '1') {
+      let tempData = [...data];
+      tempData.sort((a: Products, b: Products) => b.price - a.price);
+      setData(tempData);
+    } else if (id == '2') {
+      let tempData = [...data];
+      tempData.sort((a: Products, b: Products) => a.price - b.price);
+      setData(tempData);
+    }
+  };
+
+  const searchFilterFunction = (text: string) => {
+    // Check if searched text is not blank
+    if (text) {
+      // Inserted text is not blank
+      // Filter the masterDataSource and update FilteredDataSource
+      const newData = data.filter(function (item: Products) {
+        // Applying filter for the inserted text in search bar
+        const itemData = item.title
+          ? item.title.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setData(newData);
+      setSearch(text);
+    } else {
+      // Inserted text is blank
+      // Update FilteredDataSource with masterDataSource
+      setData(data2);
+      setSearch(text);
+    }
+  };
 
   return (
     <ScreenTemplate>
@@ -105,13 +128,16 @@ const Home = (props: HomeProps) => {
         </View>
       </View>
       <View style={styles.SearchComponent}>
-        <SearchComponent />
+        <SearchComponent onChangeText={text => searchFilterFunction(text)} />
       </View>
       <View style={styles.Features}>
         <View style={styles.AllFeaturedView}>
-          <Text style={styles.AllFeatured}>All Featured</Text>
+          <Text style={styles.AllFeatured}>
+            {data?.filter((item, index) => item.category == category).length}+
+            Items
+          </Text>
         </View>
-        <Pressable style={styles.Sort}>
+        <Pressable style={styles.Sort} onPress={handleSort}>
           <Text>Sort</Text>
           <SortIcon />
         </Pressable>
@@ -122,137 +148,42 @@ const Home = (props: HomeProps) => {
       </View>
 
       <ScrollView style={{flex: 1}}>
-        <View style={styles.FeaturesComponent}>
-          <FeaturesComponent Data={filterData} />
-        </View>
-        <View style={styles.Adscard}>
-          <AdsCard Data={AdsCardsData} />
-        </View>
-        <View style={styles.DealoftheDay}>
-          <View style={styles.DOD1}>
-            <Text style={styles.DODText1}>Deal of the Day</Text>
-            <Text style={styles.DODText2}>🕒 22h 55m 20s remaining</Text>
-          </View>
-          <Pressable
-            style={styles.ViewAll}
-            onPress={() => handleDOD(`women's clothing`)}>
-            <Text style={styles.ViewAllText}>View all</Text>
-            <RightArrow />
-          </Pressable>
-        </View>
-        <View style={styles.FeaturesComponent}>
-          <ShoppingCard
-            Data={data.filter(
-              (item, index) => item.category == `women's clothing`,
-            )}
-          />
-        </View>
-        <View style={styles.SpecialOfferView}>
-          <Pressable style={styles.SpecialOfferImage}>
-            <SpecialOfferImage />
-          </Pressable>
-          <View style={styles.DOD1}>
-            <Text style={styles.SOText1}>
-              Special Offers <Text style={styles.SOemoji}>😱</Text>
-            </Text>
-            <Text style={styles.SOText2}>
-              We make sure you get the offer you need at best prices
-            </Text>
-          </View>
-        </View>
-        <View style={[styles.SpecialOfferView]}>
-          <View style={styles.HeelsImage}>
-            <View>
-              <Rectangle />
-            </View>
-            <View style={styles.GroupStars}>
-              <GroupStars />
-            </View>
-            <View style={styles.Heels}>
-              <Heels />
-            </View>
-          </View>
-          <View style={styles.HeelsView}>
-            <Text style={styles.HeelsText1}>Flat and Heels</Text>
-            <Text style={styles.HeelsText2}>
-              Stand a chance to get rewarded
-            </Text>
-            <Pressable style={styles.Visitnow}>
-              <Text style={styles.VisitnowText}>Visit now</Text>
-              <RightArrow />
-            </Pressable>
-          </View>
-        </View>
-        <View
-          style={[
-            styles.DealoftheDay,
-            {backgroundColor: Colors.TrendyProducts, marginTop: hp(16)},
-          ]}>
-          <View style={styles.DOD1}>
-            <Text style={styles.DODText1}>Trending Products</Text>
-            <Text style={styles.DODText2}>
-              🗓️ Last Date {yesterday.toLocaleDateString('en-IN')}
-            </Text>
-          </View>
-          <Pressable
-            style={styles.ViewAll}
-            onPress={() => handleDOD(`electronics`)}>
-            <Text style={styles.ViewAllText}>View all</Text>
-            <RightArrow />
-          </Pressable>
-        </View>
-        <View style={styles.FeaturesComponent}>
-          <TrendingProductsCard
-            Data={data.filter(item => item.category == 'electronics')}
-          />
-        </View>
-        <View style={styles.HotSummerSale}>
-          <HotSummerSale />
-          <View style={styles.NewArrivals}>
-            <View style={styles.DOD1}>
-              <Text
-                style={[
-                  styles.DODText1,
-                  {fontSize: fs(20), color: Colors.Black, marginBottom: hp(4)},
-                ]}>
-                New Arrivals
-              </Text>
-              <Text
-                style={[
-                  styles.DODText2,
-                  {fontSize: fs(16), color: Colors.Black},
-                ]}>
-                Summer’s 25 Collections
-              </Text>
-            </View>
-            <Pressable
-              style={[
-                styles.ViewAll,
-                {
-                  right: wp(25),
-                  backgroundColor: Colors.Visitnow,
-                  borderColor: Colors.Visitnow,
-                },
-              ]}>
-              <Text style={styles.ViewAllText}>View all</Text>
-              <RightArrow />
-            </Pressable>
-          </View>
-        </View>
-        <View style={styles.sponserdView}>
-          <Text style={styles.sponserdText}>Sponserd</Text>
-          <Sponsered />
-          <View style={styles.FiftyOffView}>
-            <Text style={styles.FiftyOff}>up to 50% Off</Text>
-            <Text style={[styles.FiftyOff, {width: 'auto'}]}>{'>'}</Text>
-          </View>
-        </View>
+        <ProductsList
+          Data={data?.filter((item, index) => item.category == category)}
+        />
       </ScrollView>
+
+      {filterModel && (
+        <ReactNativeModal
+          isVisible={filterModel}
+          swipeDirection={'down'}
+          onSwipeComplete={() => setFilterModel(!filterModel)}
+          style={{
+            margin: 0,
+            backgroundColor: 'transparent',
+            justifyContent: 'flex-end',
+          }}>
+          <View style={styles.FilterModalView}>
+            <View style={styles.FilterSortTextView}>
+              <Text style={styles.SortText}>Sort</Text>
+              <Pressable onPress={() => setFilterModel(!filterModel)}>
+                <Image source={Images.closeIcon} style={styles.closeIcon} />
+              </Pressable>
+            </View>
+            <RadioGroup
+              radioButtons={radioButtons}
+              onPress={id => handleRadio(id)}
+              selectedId={selectedRadioId}
+              containerStyle={styles.RadioGroup}
+            />
+          </View>
+        </ReactNativeModal>
+      )}
     </ScreenTemplate>
   );
 };
 
-export default Home;
+export default ProductsScreen;
 
 const styles = StyleSheet.create({
   Header: {
@@ -534,5 +465,37 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     width: wp(327),
     justifyContent: 'space-between',
+  },
+  FilterModalView: {
+    height: hp(300),
+    width: '100%',
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: wp(20),
+  },
+  SortText: {
+    color: 'black',
+    // fontWeight: 'bold',
+    fontSize: fs(20),
+    marginTop: hp(20),
+    // alignSelf: 'center',
+  },
+  FilterSortTextView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  closeIcon: {
+    height: hp(18),
+    width: wp(18),
+    marginTop: hp(20),
+  },
+  RadioGroup: {
+    // borderWidth: 1,
+    alignItems: 'flex-start',
+    marginTop: hp(20),
+    right: wp(10),
+    padding: 0,
   },
 });

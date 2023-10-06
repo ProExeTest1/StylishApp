@@ -12,31 +12,17 @@ import {Colors} from '../helpers/colors';
 import Search from '../assets/SVGs/Search.svg';
 import Mic from '../assets/SVGs/Mic.svg';
 import {Images} from '../helpers/images';
-import {FeatureType, ShoppingCardType} from '../helpers/appData';
+import {FeatureType, ProductsListType} from '../helpers/appData';
 import Carousel from 'react-native-snap-carousel';
 import {Products} from '../helpers/interface';
 
-interface ShoppingCardProps {
+interface ProductsListProps {
   Data?: Array<Products>;
 }
 
-const ShoppingCard = (props: ShoppingCardProps) => {
+const ProductsList = (props: ProductsListProps) => {
   const [index, setIndex] = useState(2);
-  const [swipeIcon, setSwipeIcon] = useState('>');
   const flatListRef = useRef<FlatList>(null);
-
-  const ShoppingSwipe = () => {
-    if (index < props.Data?.filter((item, index) => index < 4)?.length) {
-      setIndex(index + 2);
-      if (index + 2 >= props.Data?.filter((item, index) => index < 4)?.length)
-        setSwipeIcon('<');
-      flatListRef?.current?.scrollToIndex({index: index});
-    } else {
-      setIndex(2);
-      setSwipeIcon('>');
-      flatListRef?.current?.scrollToIndex({index: 0});
-    }
-  };
 
   const renderItem = ({item}: {item: Products}) => {
     return (
@@ -44,7 +30,7 @@ const ShoppingCard = (props: ShoppingCardProps) => {
         <Image
           source={{uri: item.image}}
           resizeMode="contain"
-          style={styles.SHoppingCardImage}
+          style={styles.ProductsListImage}
         />
         <Text style={styles.TitleText}>{item.title.substring(0, 50)}...</Text>
         <Text style={styles.DescText}>
@@ -69,22 +55,21 @@ const ShoppingCard = (props: ShoppingCardProps) => {
     <View style={styles.container}>
       <FlatList
         pagingEnabled
-        data={props.Data?.filter((item, index) => index < 4)}
+        data={props.Data}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         contentContainerStyle={styles.FlatListStyle}
-        horizontal
+        // horizontal
+        scrollEnabled={false}
+        numColumns={2}
         showsHorizontalScrollIndicator={false}
         ref={flatListRef}
       />
-      <TouchableOpacity style={styles.Button} onPress={ShoppingSwipe}>
-        <Text>{swipeIcon}</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
-export default ShoppingCard;
+export default ProductsList;
 
 const styles = StyleSheet.create({
   container: {},
@@ -96,10 +81,19 @@ const styles = StyleSheet.create({
   renderItemContainer: {
     marginRight: wp(12),
     width: wp(170),
+    marginBottom: hp(12),
+    // borderWidth: 0.17,
+    height: 'auto',
+    // elevation: 2,
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.2,
+    // shadowRadius: 2,
   },
-  SHoppingCardImage: {
+  ProductsListImage: {
     height: hp(167),
     width: wp(170),
+    // borderWidth: 1,
   },
   FeatureText: {
     // borderWidth: 1,
@@ -157,7 +151,7 @@ const styles = StyleSheet.create({
   },
   Rating: {
     fontSize: fs(10),
-    width: wp(65),
+    width: wp(62),
     fontFamily: 'Montserrat-Regular',
     // textAlign: 'center',
     fontWeight: '400',

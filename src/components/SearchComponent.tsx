@@ -6,7 +6,9 @@ import Search from '../assets/SVGs/Search.svg';
 import Mic from '../assets/SVGs/Mic.svg';
 import {TextInput} from 'react-native-gesture-handler';
 
-interface SearchComponentProps {}
+interface SearchComponentProps {
+  onChangeText?: ((text: string) => void) | undefined;
+}
 
 const SearchComponent = (props: SearchComponentProps) => {
   return (
@@ -18,6 +20,7 @@ const SearchComponent = (props: SearchComponentProps) => {
         <TextInput
           placeholder="Search any Product.."
           placeholderTextColor={Colors.LightGrey}
+          onChangeText={props.onChangeText}
         />
       </View>
       <TouchableOpacity style={styles.Mic}>

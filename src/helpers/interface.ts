@@ -1,5 +1,6 @@
 import { CSSProperties, ReactNode } from "react";
-import { Image, StyleProp, ViewStyle } from "react-native";
+import { Image, ImageProps, StyleProp, ViewStyle } from "react-native";
+
 
 export interface AppProps { }
 export interface PreviewProps {
@@ -22,4 +23,20 @@ export interface AuthTextInputProps {
 }
 export interface ScreenTemplateProps {
   children: ReactNode;
+  scroll?: boolean,
+}
+
+export type Rating = {
+  rate: Number,
+  count: Number ,
+}
+
+export type Products = {
+  id: Number,
+  title: string,
+  price: number,
+  description: string,
+  category: string,
+  image: ImageProps,
+  rating: Rating, 
 }

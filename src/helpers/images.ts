@@ -9,6 +9,7 @@ export const Images = {
     FeaturesImage: require('../assets/images/FeaturesImage.png'),
     AdsCard: require('../assets/images/AdsCard.png'),
     ShoppingCard: require('../assets/images/ShoppingCard.png'),
-    TrendingProducts: require('../assets/images/TrendingProducts.png'),
+    TrendingProducts: require('../assets/images/TrendingProducts.png'), 
+    closeIcon: require('../assets/images/closeIcon.png'),
     // user_icon: userIcon,
 }

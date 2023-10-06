@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  Pressable,
 } from 'react-native';
 import {fs, hp, wp} from '../helpers/ResponsiveFonts';
 import {Colors} from '../helpers/colors';
@@ -14,18 +15,30 @@ import Mic from '../assets/SVGs/Mic.svg';
 import {TextInput} from 'react-native-gesture-handler';
 import {Images} from '../helpers/images';
 import {FeatureType} from '../helpers/appData';
+import {Products} from '../helpers/interface';
+import {useNavigation} from '@react-navigation/native';
 
 interface FeaturesComponentProps {
-  Data?: Array<FeatureType>;
+  Data?: Array<Products>;
 }
 
 const FeaturesComponent = (props: FeaturesComponentProps) => {
-  const renderItem = ({item}: {item: FeatureType}) => {
+  const navigation = useNavigation();
+
+  const handlePress = category => {
+    navigation.navigate('ProductsScreen', {category: category});
+  };
+
+  const renderItem = ({item}: {item: Products}) => {
     return (
-      <View style={styles.renderItemContainer}>
-        <Image source={Images.FeaturesImage} style={styles.FeaturesImage} />
-        <Text style={styles.FeatureText}>{item.feature}</Text>
-      </View>
+      <Pressable
+        style={styles.renderItemContainer}
+        onPress={() => handlePress(item.category)}>
+        <Image source={{uri: item.image}} style={styles.FeaturesImage} />
+        <Text style={styles.FeatureText}>
+          {item.category[0].toUpperCase() + item.category.slice(1)}
+        </Text>
+      </Pressable>
     );
   };
   return (
@@ -53,10 +66,14 @@ const styles = StyleSheet.create({
   },
   renderItemContainer: {
     marginHorizontal: wp(8),
+    // width: '100%',
+    // justifyContent: 'space-between',
   },
   FeaturesImage: {
     height: hp(56),
     width: wp(56),
+    borderRadius: 50,
+    borderWidth: 0.3,
   },
   FeatureText: {
     // borderWidth: 1,
@@ -65,5 +82,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: fs(10),
     marginTop: hp(2),
+    width: wp(56),
   },
 });

@@ -1,5 +1,7 @@
 import { Image } from "react-native"
 import { Images } from "./images"
+import { RadioButtonProps } from "react-native-radio-buttons-group"
+import { useMemo } from "react"
 
 export const PreviewData = [
     {
@@ -84,3 +86,21 @@ export const TrendingProductsData : Array<ShoppingCardType> = [
         Price: 1500, MRP: 2499, Discount: 40, NoOfRatings: 56890
     },
 ]
+
+ export const radioButtons: RadioButtonProps[] = [
+      {
+        id: '1', // acts as primary key, should be unique and non-empty string
+        label: 'Price: High to Low',
+        value: 'hightolow',
+      },
+      {
+        id: '2',
+        label: 'Price: Low to High',
+        value: 'lowtohigh',
+         },
+    //   {
+    //     id: '3', // acts as primary key, should be unique and non-empty string
+    //     label: 'All Products',
+    //     value: 'allproducts',
+    //   },
+    ]
