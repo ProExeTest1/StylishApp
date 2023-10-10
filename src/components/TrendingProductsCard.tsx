@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  Pressable,
 } from 'react-native';
 import {fs, hp, wp} from '../helpers/ResponsiveFonts';
 import {Colors} from '../helpers/colors';
@@ -14,6 +15,7 @@ import Mic from '../assets/SVGs/Mic.svg';
 import {Images} from '../helpers/images';
 import {FeatureType, ShoppingCardType} from '../helpers/appData';
 import {Products} from '../helpers/interface';
+import {useNavigation} from '@react-navigation/native';
 
 interface TrendingProductsCardProps {
   Data?: Array<Products>;
@@ -23,6 +25,7 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
   const [index, setIndex] = useState(2);
   const [swipeIcon, setSwipeIcon] = useState('>');
   const flatListRef = useRef<FlatList>(null);
+  const navigation = useNavigation();
 
   const ShoppingSwipe = () => {
     if (index < props.Data?.filter((item, index) => index < 4)?.length) {
@@ -36,10 +39,15 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
       flatListRef?.current?.scrollToIndex({index: 0});
     }
   };
+  const ProductDetails = (item: Products) => {
+    navigation.navigate('ProductDetails', {item});
+  };
 
   const renderItem = ({item}: {item: Products}) => {
     return (
-      <View style={styles.renderItemContainer}>
+      <Pressable
+        style={styles.renderItemContainer}
+        onPress={() => ProductDetails(item)}>
         <Image
           source={{uri: item.image}}
           style={styles.TrendingProductsCardImage}
@@ -59,7 +67,7 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
             {item.NoOfRatings}
           </Text>
         </View> */}
-      </View>
+      </Pressable>
     );
   };
   return (

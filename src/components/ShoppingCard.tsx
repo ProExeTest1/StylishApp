@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  Pressable,
 } from 'react-native';
 import {fs, hp, wp} from '../helpers/ResponsiveFonts';
 import {Colors} from '../helpers/colors';
@@ -15,6 +16,7 @@ import {Images} from '../helpers/images';
 import {FeatureType, ShoppingCardType} from '../helpers/appData';
 import Carousel from 'react-native-snap-carousel';
 import {Products} from '../helpers/interface';
+import {useNavigation} from '@react-navigation/native';
 
 interface ShoppingCardProps {
   Data?: Array<Products>;
@@ -24,6 +26,7 @@ const ShoppingCard = (props: ShoppingCardProps) => {
   const [index, setIndex] = useState(2);
   const [swipeIcon, setSwipeIcon] = useState('>');
   const flatListRef = useRef<FlatList>(null);
+  const navigation = useNavigation();
 
   const ShoppingSwipe = () => {
     if (index < props.Data?.filter((item, index) => index < 4)?.length) {
@@ -38,9 +41,15 @@ const ShoppingCard = (props: ShoppingCardProps) => {
     }
   };
 
+  const ProductDetails = (item: Products) => {
+    navigation.navigate('ProductDetails', {item});
+  };
+
   const renderItem = ({item}: {item: Products}) => {
     return (
-      <View style={styles.renderItemContainer}>
+      <Pressable
+        style={styles.renderItemContainer}
+        onPress={() => ProductDetails(item)}>
         <Image
           source={{uri: item.image}}
           resizeMode="contain"
@@ -62,7 +71,7 @@ const ShoppingCard = (props: ShoppingCardProps) => {
             {item.rating.count}
           </Text>
         </View>
-      </View>
+      </Pressable>
     );
   };
   return (

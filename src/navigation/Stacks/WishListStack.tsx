@@ -1,18 +1,34 @@
 import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {View, Text} from 'react-native';
+import Home from '../../screens/Home/Home';
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
+import Wishlist from '../../screens/Wishlist/Wishlist';
 
-interface WishListStackProps {}
+const Stack = createStackNavigator();
 
-const WishListStack = (props: WishListStackProps) => {
+const WishListStack = () => {
   return (
-    <View style={styles.container}>
-      <Text>WishListStack</Text>
-    </View>
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerShown: false,
+        headerStyle: {
+          backgroundColor: '#101010',
+        },
+        animationEnabled: false,
+        gestureEnabled: false,
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+        headerTintColor: '#ffd700',
+        ...TransitionPresets.SlideFromRightIOS,
+      }}>
+      <Stack.Screen
+        name="Wishlist"
+        component={Wishlist}
+        options={{title: 'Wishlist'}}
+      />
+    </Stack.Navigator>
   );
 };
-
 export default WishListStack;
-
-const styles = StyleSheet.create({
-  container: {},
-});

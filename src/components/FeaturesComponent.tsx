@@ -25,7 +25,20 @@ interface FeaturesComponentProps {
 const FeaturesComponent = (props: FeaturesComponentProps) => {
   const navigation = useNavigation();
 
+  const HideBottomTab = () => {
+    navigation.getParent()?.setOptions({
+      tabBarStyle: {
+        display: 'none',
+      },
+    });
+    return () =>
+      navigation.getParent()?.setOptions({
+        tabBarStyle: undefined,
+      });
+  };
+
   const handlePress = category => {
+    HideBottomTab();
     navigation.navigate('ProductsScreen', {category: category});
   };
 

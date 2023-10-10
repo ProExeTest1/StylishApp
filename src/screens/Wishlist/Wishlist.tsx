@@ -1,15 +1,5 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableHighlight,
-  Pressable,
-  Image,
-  Platform,
-  BackHandler,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Text, View, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import ScreenTemplate from '../../components/ScreenTemplate';
 import DrawerIcon from '../../assets/SVGs/DrawerIcon.svg';
 import StylishLogo from '../../assets/SVGs/StylishLogo.svg';
@@ -19,108 +9,53 @@ import {fs, hp, wp} from '../../helpers/ResponsiveFonts';
 import {Colors} from '../../helpers/colors';
 import FilterIcon from '../../assets/SVGs/FilterIcon.svg';
 import SortIcon from '../../assets/SVGs/SortIcon.svg';
-import FeaturesComponent from '../../components/FeaturesComponent';
-
 import {setProducts} from '../../Store/Reducer';
 import {useDispatch, useSelector} from 'react-redux';
 import {Products} from '../../helpers/interface';
 import {ScrollView} from 'react-native-gesture-handler';
 import ProductsList from '../../components/ProductsList';
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import ReactNativeModal from 'react-native-modal';
 import {Images} from '../../helpers/images';
-import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
+import RadioGroup from 'react-native-radio-buttons-group';
 import {radioButtons} from '../../helpers/appData';
 
-const baseUrl = 'https://fakestoreapi.com/ProductsScreen';
-interface ProductsScreenProps {}
+const baseUrl = 'https://fakestoreapi.com/Wishlist';
 
-const ProductsScreen = (props: ProductsScreenProps) => {
+const Wishlist = props => {
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
-  const [categoryData, setCategoryData] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [filterModel, setFilterModel] = useState(false);
-  const [selectedRadioId, setSelectedRadioId] = useState<string | undefined>();
+  const [selectedRadioId, setSelectedRadioId] = useState(undefined);
   const dispatch = useDispatch();
   const stateData = useSelector(state => state.Reducers);
-  const navigation = useNavigation();
-  const route = useRoute();
-  const category = route.params?.category;
   const [search, setSearch] = useState('');
   const [refresh, setRefresh] = useState(false);
 
   console.log('selectedRadioId------------', selectedRadioId);
 
-  const handleSort = () => {
-    setFilterModel(true);
-  };
+  useEffect(() => {
+    // Check if the screen is refreshed (when refresh state is true)
+    if (refresh) {
+      console.log('Products---------------------', stateData.products);
 
-  const handleRadio = (id: string) => {
-    setSelectedRadioId(id);
-    setFilterModel(!filterModel);
+      setData(stateData.products);
+      setData2(stateData.products);
 
-    if (id == '1') {
-      let tempData = [...data];
-      tempData.sort((a: Products, b: Products) => b.price - a.price);
-      setData(tempData);
-    } else if (id == '2') {
-      let tempData = [...data];
-      tempData.sort((a: Products, b: Products) => a.price - b.price);
-      setData(tempData);
+      const ids = stateData.products.map(({category}) => category);
+      const tempData = stateData.products.filter(
+        ({category}, index) => !ids.includes(category, index + 1),
+      );
+
+      console.log('--------------------tempData', tempData);
+
+      setFilterData(tempData);
+
+      // Reset the refresh state after data is refreshed
+      setRefresh(false);
     }
-  };
-
-  const searchFilterFunction = (text: string) => {
-    // Check if searched text is not blank
-    if (text) {
-      // Inserted text is not blank
-      // Filter the masterDataSource and update FilteredDataSource
-      const newData = data.filter(function (item: Products) {
-        // Applying filter for the inserted text in search bar
-        const itemData = item.title
-          ? item.title.toUpperCase()
-          : ''.toUpperCase();
-        const textData = text.toUpperCase();
-        return itemData.indexOf(textData) > -1;
-      });
-      setData(newData);
-      setSearch(text);
-    } else {
-      // Inserted text is blank
-      // Update FilteredDataSource with masterDataSource
-      setData(data2);
-      setSearch(text);
-    }
-  };
-  const ShowBottomTab = () => {
-    navigation.getParent()?.setOptions({
-      tabBarStyle: {
-        backgroundColor: Colors.white,
-        height: Platform.OS === 'ios' ? '11%' : '10%',
-        // justifyContent: 'center',
-        paddingBottom: Platform.OS === 'ios' ? 15 : 0,
-        borderTopColor: Colors.Transparent,
-        elevation: 2,
-        shadowOpacity: 0,
-
-        borderWidth: 1,
-      },
-    });
-  };
-  const GoBack = () => {
-    ShowBottomTab();
-    navigation.goBack();
-  };
-
-  const handleBackPress = () => {
-    ShowBottomTab();
-    return true;
-  };
+  }, [refresh, stateData.products]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -136,48 +71,50 @@ const ProductsScreen = (props: ProductsScreenProps) => {
     }, []),
   );
 
-  useEffect(() => {
-    if (refresh) {
-      console.log('Products---------------------', stateData.products);
+  const handleSort = () => {
+    setFilterModel(true);
+  };
 
-      setData(stateData.products);
-      setData2(stateData.products);
+  const handleRadio = id => {
+    setSelectedRadioId(id);
+    setFilterModel(!filterModel);
 
-      setCategoryData(stateData.products);
-      const ids = stateData.products.map(({category}: Products) => category);
-      const tempData = stateData.products.filter(
-        ({category}: Products, index: number) => {
-          return !ids.includes(category, index + 1);
-        },
-      );
-
-      console.log('--------------------tempData', tempData);
-
-      // setFilterData([{ category: 'View All' }, ...tempData]);
-      setFilterData(tempData);
+    if (id == '1') {
+      let tempData = [...data];
+      tempData.sort((a, b) => b.price - a.price);
+      setData(tempData);
+    } else if (id == '2') {
+      let tempData = [...data];
+      tempData.sort((a, b) => a.price - b.price);
+      setData(tempData);
     }
+  };
 
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      handleBackPress,
-    );
-    return () => backHandler.remove();
-
-    // const ids = books.map(({ title }) => title);
-    //     const filtered = books.filter(({ title }, index) =>
-    // !ids.includes(title, index + 1));
-  }, [refresh, stateData.products]);
+  const searchFilterFunction = text => {
+    if (text) {
+      const newData = data.filter(function (item) {
+        const itemData = item.title
+          ? item.title.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setData(newData);
+      setSearch(text);
+    } else {
+      setData(data2);
+      setSearch(text);
+    }
+  };
 
   return (
     <ScreenTemplate>
       <View style={styles.Header}>
-        <TouchableOpacity style={styles.DrawerIcon} onPress={GoBack}>
-          <Text style={styles.categoryheader}>{'<'}</Text>
+        <TouchableOpacity style={styles.DrawerIcon}>
+          <DrawerIcon />
         </TouchableOpacity>
         <View style={styles.StylishLogo}>
-          <Text style={styles.categoryheader}>
-            {category[0].toUpperCase() + category.slice(1)}
-          </Text>
+          <StylishLogo />
         </View>
         <View style={styles.ProfilePic}>
           <ProfilePic />
@@ -189,25 +126,22 @@ const ProductsScreen = (props: ProductsScreenProps) => {
       <View style={styles.Features}>
         <View style={styles.AllFeaturedView}>
           <Text style={styles.AllFeatured}>
-            {data?.filter((item, index) => item.category == category).length}+
-            Items
+            {data?.filter(item => item.fav == true).length}+ Items
           </Text>
         </View>
-        <Pressable style={styles.Sort} onPress={handleSort}>
+        <TouchableOpacity style={styles.Sort} onPress={handleSort}>
           <Text>Sort</Text>
           <SortIcon />
-        </Pressable>
-        <Pressable style={styles.Filter}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.Filter}>
           <Text>Filter</Text>
           <FilterIcon />
-        </Pressable>
+        </TouchableOpacity>
       </View>
 
       <ScrollView style={{flex: 1}}>
         <ProductsList
-          Data={stateData.products?.filter(
-            (item, index) => item.category == category,
-          )}
+          Data={stateData.products?.filter(item => item.fav == true)}
         />
       </ScrollView>
 
@@ -224,9 +158,9 @@ const ProductsScreen = (props: ProductsScreenProps) => {
           <View style={styles.FilterModalView}>
             <View style={styles.FilterSortTextView}>
               <Text style={styles.SortText}>Sort</Text>
-              <Pressable onPress={() => setFilterModel(!filterModel)}>
+              <TouchableOpacity onPress={() => setFilterModel(!filterModel)}>
                 <Image source={Images.closeIcon} style={styles.closeIcon} />
-              </Pressable>
+              </TouchableOpacity>
             </View>
             <RadioGroup
               radioButtons={radioButtons}
@@ -241,7 +175,7 @@ const ProductsScreen = (props: ProductsScreenProps) => {
   );
 };
 
-export default ProductsScreen;
+export default Wishlist;
 
 const styles = StyleSheet.create({
   Header: {
@@ -533,11 +467,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(20),
   },
   SortText: {
+    color: 'black',
     // fontWeight: 'bold',
     fontSize: fs(20),
     marginTop: hp(20),
     // alignSelf: 'center',
-    color: Colors.Black,
   },
   FilterSortTextView: {
     flexDirection: 'row',
@@ -555,11 +489,5 @@ const styles = StyleSheet.create({
     marginTop: hp(20),
     right: wp(10),
     padding: 0,
-  },
-  categoryheader: {
-    color: Colors.Black,
-    fontSize: fs(20),
-    fontWeight: '700',
-    fontFamily: 'Montserrat-Regular',
   },
 });

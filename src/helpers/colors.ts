@@ -25,4 +25,5 @@ export const Colors = {
     TrendyProducts: '#FD6E87',
     Visitnow: '#F83758',
     ShoppingSwipe: '#BBBBBB',
+    DeliveryOneHour: '#FFCCD5',
 }

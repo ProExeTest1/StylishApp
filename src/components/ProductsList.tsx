@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Text,
   View,
@@ -6,15 +6,20 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  Pressable,
 } from 'react-native';
 import {fs, hp, wp} from '../helpers/ResponsiveFonts';
 import {Colors} from '../helpers/colors';
-import Search from '../assets/SVGs/Search.svg';
+import HeartIconBlack from '../assets/SVGs/WishlistIcons/HeartIconBlack.svg';
+import HeartIconFilled from '../assets/SVGs/WishlistIcons/HeartIconFilled.svg';
 import Mic from '../assets/SVGs/Mic.svg';
 import {Images} from '../helpers/images';
 import {FeatureType, ProductsListType} from '../helpers/appData';
 import Carousel from 'react-native-snap-carousel';
 import {Products} from '../helpers/interface';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {setProducts} from '../Store/Reducer';
 
 interface ProductsListProps {
   Data?: Array<Products>;
@@ -22,11 +27,74 @@ interface ProductsListProps {
 
 const ProductsList = (props: ProductsListProps) => {
   const [index, setIndex] = useState(2);
+  const [hearts, setHearts] = useState([]);
   const flatListRef = useRef<FlatList>(null);
+  const [fav, setFav] = useState(false);
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const stateData = useSelector(state => state.Reducers);
+
+  const ProductDetails = (item: Products) => {
+    navigation.replace('ProductDetails', {item});
+  };
+
+  const HeartSelection = (item: Products) => {
+    const updatedProducts = stateData.products.map((ele: Products) => {
+      if (ele.id === item.id) {
+        const updatedEle = Object.assign({}, ele); // Create a new object by copying properties
+        updatedEle.fav = !updatedEle.fav; // Update the 'fav' property
+        if (hearts.includes(item.id)) {
+          const tempArray = hearts.filter(heart => heart != item.id);
+          setHearts(tempArray);
+        } else setHearts([...hearts, item.id]);
+        return updatedEle;
+      } else {
+        return ele;
+      }
+    });
+
+    // if (item.fav == true) {
+    //   setFav(false);
+    // } else {
+    //   setFav(true);
+    // }
+
+    dispatch(setProducts(updatedProducts));
+
+    console.log(
+      'updatedProducts in Products List ------------------------- ',
+      updatedProducts,
+    );
+
+    // navigation.replace('ProductsScreen', {category: item.category});
+  };
+
+  useEffect(() => {
+    const tempArray = stateData.products
+      ?.filter(ele => ele.fav === true)
+      .map(ele => ele.id);
+
+    setHearts(tempArray);
+
+    console.log('UseEffect--------------props.Data', props.Data);
+    console.log('UseEffect--------------tempArray', tempArray);
+    console.log('UseEffect--------------Hearts', hearts);
+  }, [stateData.products]);
 
   const renderItem = ({item}: {item: Products}) => {
     return (
-      <View style={styles.renderItemContainer}>
+      <Pressable
+        style={styles.renderItemContainer}
+        onPress={() => ProductDetails(item)}>
+        <TouchableOpacity
+          style={styles.HeartSelection}
+          onPress={() => HeartSelection(item)}>
+          {hearts.includes(item.id) || item.fav == true ? (
+            <HeartIconFilled />
+          ) : (
+            <HeartIconBlack />
+          )}
+        </TouchableOpacity>
         <Image
           source={{uri: item.image}}
           resizeMode="contain"
@@ -48,7 +116,7 @@ const ProductsList = (props: ProductsListProps) => {
             {item.rating.count}
           </Text>
         </View>
-      </View>
+      </Pressable>
     );
   };
   return (
@@ -176,5 +244,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginVertical: wp(100),
     right: wp(10),
+  },
+  HeartSelection: {
+    position: 'absolute',
+    zIndex: 1,
+    alignSelf: 'flex-end',
   },
 });

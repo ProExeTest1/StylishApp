@@ -39,4 +39,5 @@ export type Products = {
   category: string,
   image: ImageProps,
   rating: Rating, 
+  fav: boolean,
 }

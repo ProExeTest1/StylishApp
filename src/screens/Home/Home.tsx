@@ -54,9 +54,20 @@ const Home = (props: HomeProps) => {
   const yesterday = new Date(today.setDate(today.getDate() - 1));
 
   const handleDOD = category => {
+    HideBottomTab();
     navigation.navigate('ProductsScreen', {category: category});
   };
-
+  const HideBottomTab = () => {
+    navigation.getParent()?.setOptions({
+      tabBarStyle: {
+        display: 'none',
+      },
+    });
+    return () =>
+      navigation.getParent()?.setOptions({
+        tabBarStyle: undefined,
+      });
+  };
   useEffect(() => {
     axios({
       method: 'get',
@@ -70,11 +81,17 @@ const Home = (props: HomeProps) => {
         ' ---------------------------------- Response.Data-----\n ',
         response.data,
       );
-      dispatch(setProducts(response.data));
-      setData(response.data);
-      setCategoryData(response.data);
-      const ids = response.data.map(({category}: Products) => category);
-      const tempData = response.data.filter(
+
+      let dataArray = response.data.map(item => {
+        return (item.fav = false), item;
+      });
+      console.log('dataArray----------------', dataArray);
+
+      dispatch(setProducts(dataArray));
+      setData(dataArray);
+      setCategoryData(dataArray);
+      const ids = dataArray.map(({category}: Products) => category);
+      const tempData = dataArray.filter(
         ({category}: Products, index: number) => {
           return !ids.includes(category, index + 1);
         },
