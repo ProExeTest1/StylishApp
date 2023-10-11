@@ -10,43 +10,34 @@ import {
 } from 'react-native';
 import {fs, hp, wp} from '../helpers/ResponsiveFonts';
 import {Colors} from '../helpers/colors';
-import Search from '../assets/SVGs/Search.svg';
+import HeartIconBlack from '../assets/SVGs/WishlistIcons/HeartIconBlack.svg';
+import HeartIconFilled from '../assets/SVGs/WishlistIcons/HeartIconFilled.svg';
 import Mic from '../assets/SVGs/Mic.svg';
 import {Images} from '../helpers/images';
-import {FeatureType, ShoppingCardType} from '../helpers/appData';
+import {FeatureType, ShoppingListType} from '../helpers/appData';
 import Carousel from 'react-native-snap-carousel';
 import {Products} from '../helpers/interface';
 import {useNavigation} from '@react-navigation/native';
-import HeartIconBlack from '../assets/SVGs/WishlistIcons/HeartIconBlack.svg';
-import HeartIconFilled from '../assets/SVGs/WishlistIcons/HeartIconFilled.svg';
 import {useDispatch, useSelector} from 'react-redux';
 import {setProducts} from '../Store/Reducer';
 
-interface ShoppingCardProps {
+interface ShoppingListProps {
   Data?: Array<Products>;
 }
 
-const ShoppingCard = (props: ShoppingCardProps) => {
+const ShoppingList = (props: ShoppingListProps) => {
   const [index, setIndex] = useState(2);
-  const [swipeIcon, setSwipeIcon] = useState('>');
+  const [hearts, setHearts] = useState([]);
   const flatListRef = useRef<FlatList>(null);
+  const [fav, setFav] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const stateData = useSelector(state => state.Reducers);
-  const [hearts, setHearts] = useState([]);
 
-  const ShoppingSwipe = () => {
-    if (index < props.Data?.filter((item, index) => index < 4)?.length) {
-      setIndex(index + 2);
-      if (index + 2 >= props.Data?.filter((item, index) => index < 4)?.length)
-        setSwipeIcon('<');
-      flatListRef?.current?.scrollToIndex({index: index});
-    } else {
-      setIndex(2);
-      setSwipeIcon('>');
-      flatListRef?.current?.scrollToIndex({index: 0});
-    }
+  const ProductDetails = (item: Products) => {
+    navigation.replace('ProductDetails', {item});
   };
+
   const HeartSelection = (item: Products) => {
     const updatedProducts = stateData.products.map((ele: Products) => {
       if (ele.id === item.id) {
@@ -61,10 +52,21 @@ const ShoppingCard = (props: ShoppingCardProps) => {
         return ele;
       }
     });
+
+    // if (item.fav == true) {
+    //   setFav(false);
+    // } else {
+    //   setFav(true);
+    // }
+
     dispatch(setProducts(updatedProducts));
-  };
-  const ProductDetails = (item: Products) => {
-    navigation.navigate('ProductDetails', {item});
+
+    console.log(
+      'updatedProducts in Products List ------------------------- ',
+      updatedProducts,
+    );
+
+    // navigation.replace('ProductsScreen', {category: item.category});
   };
 
   useEffect(() => {
@@ -73,67 +75,76 @@ const ShoppingCard = (props: ShoppingCardProps) => {
       .map(ele => ele.id);
 
     setHearts(tempArray);
+
+    console.log('UseEffect--------------props.Data', props.Data);
+    console.log('UseEffect--------------tempArray', tempArray);
+    console.log('UseEffect--------------Hearts', hearts);
   }, [stateData.products]);
 
   const renderItem = ({item}: {item: Products}) => {
     return (
-      <Pressable
-        style={styles.renderItemContainer}
-        onPress={() => ProductDetails(item)}>
-        <TouchableOpacity
-          style={styles.HeartSelection}
-          onPress={() => HeartSelection(item)}>
-          {hearts.includes(item.id) || item.fav == true ? (
-            <HeartIconFilled />
-          ) : (
-            <HeartIconBlack />
-          )}
-        </TouchableOpacity>
-
-        <Image
-          source={{uri: item.image}}
-          resizeMode="contain"
-          style={styles.SHoppingCardImage}
-        />
-        <Text style={styles.TitleText}>{item.title.substring(0, 50)}...</Text>
-        <Text style={styles.DescText}>
-          {item.description.substring(0, 70)}...
-        </Text>
-        <Text style={styles.PriceText}>${item.price}</Text>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {/* <Text style={styles.MRPText}>₹{item.MRP}</Text> */}
-          {/* <Text style={styles.DiscountText}>{item.Discount}%Off</Text> */}
+      <View>
+        <View style={styles.renderItemContainer}>
+          <View style={styles.ProductImage}>
+            <TouchableOpacity
+              style={styles.HeartSelection}
+              onPress={() => HeartSelection(item)}>
+              {hearts.includes(item.id) || item.fav == true ? (
+                <HeartIconFilled />
+              ) : (
+                <HeartIconBlack />
+              )}
+            </TouchableOpacity>
+            <Image
+              source={{uri: item.image}}
+              resizeMode="contain"
+              style={styles.ShoppingListImage}
+            />
+          </View>
+          <View style={styles.ProductDetails}>
+            <Text style={styles.TitleText}>
+              {item.title.substring(0, 50)}...
+            </Text>
+            <Text style={styles.DescText}>
+              {item.description.substring(0, 70)}...
+            </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {/* <Text style={styles.MRPText}>₹{item.MRP}</Text> */}
+              {/* <Text style={styles.DiscountText}>{item.Discount}%Off</Text> */}
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={styles.Rating}>⭐⭐⭐⭐⭐</Text>
+              <Text style={[styles.Rating, {fontSize: fs(14)}]}>
+                {' '}
+                {item.rating.count}
+              </Text>
+            </View>
+            <Text style={styles.PriceText}>${item.price}</Text>
+          </View>
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.Rating}>⭐⭐⭐⭐⭐</Text>
-          <Text style={[styles.Rating, {fontSize: fs(14)}]}>
-            {' '}
-            {item.rating.count}
-          </Text>
-        </View>
-      </Pressable>
+        <View style={styles.hrLine}></View>
+      </View>
     );
   };
   return (
     <View style={styles.container}>
       <FlatList
         pagingEnabled
-        data={props.Data?.filter((item, index) => index < 4)}
+        data={props.Data}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         contentContainerStyle={styles.FlatListStyle}
-        horizontal
+        // horizontal
+        scrollEnabled={false}
+        // numColumns={2}
         showsHorizontalScrollIndicator={false}
         ref={flatListRef}
       />
-      <TouchableOpacity style={styles.Button} onPress={ShoppingSwipe}>
-        <Text>{swipeIcon}</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
-export default ShoppingCard;
+export default ShoppingList;
 
 const styles = StyleSheet.create({
   container: {},
@@ -145,10 +156,21 @@ const styles = StyleSheet.create({
   renderItemContainer: {
     marginRight: wp(12),
     width: wp(170),
+    marginBottom: hp(12),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    // borderWidth: 0.17,
+    height: 'auto',
+    // elevation: 2,
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.2,
+    // shadowRadius: 2,
   },
-  SHoppingCardImage: {
+  ShoppingListImage: {
     height: hp(167),
     width: wp(170),
+    // borderWidth: 1,
   },
   FeatureText: {
     // borderWidth: 1,
@@ -162,7 +184,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     // textAlign: 'center',
     fontWeight: '500',
-    fontSize: fs(12),
+    fontSize: fs(17),
     marginTop: hp(5),
     color: Colors.Black,
   },
@@ -176,13 +198,18 @@ const styles = StyleSheet.create({
     color: Colors.Black,
   },
   PriceText: {
-    width: wp(66),
+    width: wp(90),
     fontFamily: 'Montserrat-Regular',
     // textAlign: 'center',
     fontWeight: '500',
-    fontSize: fs(12),
+    fontSize: fs(17),
     marginTop: hp(5),
     color: Colors.Black,
+    borderWidth: 0.3,
+    textAlign: 'center',
+    borderRadius: 10,
+    paddingVertical: hp(5),
+    paddingHorizontal: wp(5),
   },
   MRPText: {
     width: wp(41),
@@ -206,7 +233,7 @@ const styles = StyleSheet.create({
   },
   Rating: {
     fontSize: fs(10),
-    width: wp(65),
+    width: wp(62),
     fontFamily: 'Montserrat-Regular',
     // textAlign: 'center',
     fontWeight: '400',
@@ -236,5 +263,21 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 1,
     alignSelf: 'flex-end',
+  },
+  ProductDetails: {
+    marginLeft: wp(15),
+    // borderWidth: 1,
+  },
+  ProductImage: {},
+  hrLine: {
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 0.3},
+    shadowOpacity: 0.3,
+    shadowRadius: 0.3,
+    borderWidth: 0.3,
+    borderColor: Colors.LightGrey,
+    marginTop: hp(18),
+    marginHorizontal: wp(-12),
   },
 });

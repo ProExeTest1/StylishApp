@@ -205,9 +205,7 @@ const ProductsScreen = (props: ProductsScreenProps) => {
 
       <ScrollView style={{flex: 1}}>
         <ProductsList
-          Data={stateData.products?.filter(
-            (item, index) => item.category == category,
-          )}
+          Data={data?.filter((item, index) => item.category == category)}
         />
       </ScrollView>
 

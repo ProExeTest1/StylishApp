@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Text,
   View,
@@ -16,6 +16,10 @@ import {Images} from '../helpers/images';
 import {FeatureType, ShoppingCardType} from '../helpers/appData';
 import {Products} from '../helpers/interface';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import HeartIconBlack from '../assets/SVGs/WishlistIcons/HeartIconBlack.svg';
+import HeartIconFilled from '../assets/SVGs/WishlistIcons/HeartIconFilled.svg';
+import {setProducts} from '../Store/Reducer';
 
 interface TrendingProductsCardProps {
   Data?: Array<Products>;
@@ -26,6 +30,9 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
   const [swipeIcon, setSwipeIcon] = useState('>');
   const flatListRef = useRef<FlatList>(null);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const stateData = useSelector(state => state.Reducers);
+  const [hearts, setHearts] = useState([]);
 
   const ShoppingSwipe = () => {
     if (index < props.Data?.filter((item, index) => index < 4)?.length) {
@@ -42,12 +49,36 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
   const ProductDetails = (item: Products) => {
     navigation.navigate('ProductDetails', {item});
   };
-
+  const HeartSelection = (item: Products) => {
+    const updatedProducts = stateData.products.map((ele: Products) => {
+      if (ele.id === item.id) {
+        const updatedEle = Object.assign({}, ele); // Create a new object by copying properties
+        updatedEle.fav = !updatedEle.fav; // Update the 'fav' property
+        if (hearts.includes(item.id)) {
+          const tempArray = hearts.filter(heart => heart != item.id);
+          setHearts(tempArray);
+        } else setHearts([...hearts, item.id]);
+        return updatedEle;
+      } else {
+        return ele;
+      }
+    });
+    dispatch(setProducts(updatedProducts));
+  };
   const renderItem = ({item}: {item: Products}) => {
     return (
       <Pressable
         style={styles.renderItemContainer}
         onPress={() => ProductDetails(item)}>
+        <TouchableOpacity
+          style={styles.HeartSelection}
+          onPress={() => HeartSelection(item)}>
+          {hearts.includes(item.id) || item.fav == true ? (
+            <HeartIconFilled />
+          ) : (
+            <HeartIconBlack />
+          )}
+        </TouchableOpacity>
         <Image
           source={{uri: item.image}}
           style={styles.TrendingProductsCardImage}
@@ -70,6 +101,15 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
       </Pressable>
     );
   };
+
+  useEffect(() => {
+    const tempArray = stateData.products
+      ?.filter(ele => ele.fav === true)
+      .map(ele => ele.id);
+
+    setHearts(tempArray);
+  }, [stateData.products]);
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -186,5 +226,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginVertical: wp(100),
     right: wp(10),
+  },
+  HeartSelection: {
+    position: 'absolute',
+    zIndex: 1,
+    alignSelf: 'flex-end',
   },
 });

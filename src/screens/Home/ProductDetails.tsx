@@ -23,6 +23,9 @@ import {Products} from '../../helpers/interface';
 import FilterIcon from '../../assets/SVGs/FilterIcon.svg';
 import SortIcon from '../../assets/SVGs/SortIcon.svg';
 import ProductsList from '../../components/ProductsList';
+import {setCartArray} from '../../Store/Reducer';
+import GoToCartIcon from '../../assets/SVGs/GoToCartIcon.svg';
+import BuyNowIcon from '../../assets/SVGs/BuyNowIcon.svg';
 
 const ProductDetails = () => {
   const [filterModel, setFilterModel] = useState(false);
@@ -32,6 +35,7 @@ const ProductDetails = () => {
   const item = route.params.item;
   const navigation = useNavigation();
   const [filterData, setFilterData] = useState([]);
+  const [cartText, setCartText] = useState('Go to cart');
 
   useEffect(() => {
     const data = stateData.products;
@@ -49,6 +53,11 @@ const ProductDetails = () => {
 
   const Back = () => {
     navigation.goBack();
+  };
+
+  const GoToCartFn = () => {
+    setCartText('Added');
+    dispatch(setCartArray([...stateData.cartarray, item]));
   };
 
   return (
@@ -80,11 +89,31 @@ const ProductDetails = () => {
           <Text style={styles.ProductDetailsText}>Product Details</Text>
           <Text style={styles.DescText}>{item.description}</Text>
           <View style={styles.CartBuy}>
-            <Pressable style={{marginRight: wp(10)}}>
-              <GoToCart />
+            <Pressable
+              style={{marginRight: wp(10)}}
+              onPress={cartText == 'Go to cart' ? () => GoToCartFn() : null}>
+              {/* <GoToCart /> */}
+              <View style={styles.GocartView}>
+                <View style={styles.carticon}>
+                  <GoToCartIcon />
+                </View>
+                <View style={styles.cartbox}>
+                  <Text style={styles.gotocartText}>{cartText}</Text>
+                </View>
+              </View>
             </Pressable>
             <Pressable>
-              <BuyNow />
+              {/* <BuyNow /> */}
+              <View style={[styles.GocartView]}>
+                <View
+                  style={[styles.carticon, {backgroundColor: Colors.BuyNow}]}>
+                  <BuyNowIcon />
+                </View>
+                <View
+                  style={[styles.cartbox, {backgroundColor: Colors.BuyNow}]}>
+                  <Text style={[styles.gotocartText]}>{'Buy Now'}</Text>
+                </View>
+              </View>
             </Pressable>
           </View>
 
@@ -128,7 +157,7 @@ const ProductDetails = () => {
             </View>
           </View>
 
-          <View>
+          <View style={styles.ProductList}>
             <ProductsList
               Data={stateData.products.filter(
                 (ele: Products) =>
@@ -333,6 +362,40 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: fs(20),
     color: Colors.Black,
+  },
+  ProductList: {
+    marginHorizontal: wp(-12),
+  },
+  GocartView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // height: hp(50),
+  },
+  carticon: {
+    height: hp(40),
+    width: wp(40),
+    borderRadius: 20,
+    backgroundColor: Colors.GoToCart,
+    // borderWidth: 1,
+    zIndex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cartbox: {
+    width: wp(110),
+    height: hp(36),
+    backgroundColor: Colors.GoToCart,
+    right: wp(10),
+    borderTopRightRadius: wp(4),
+    borderBottomRightRadius: wp(4),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gotocartText: {
+    color: Colors.white,
+    fontFamily: 'Montserrat-Regular',
+    fontWeight: '600',
+    fontSize: fs(16),
   },
 });
 

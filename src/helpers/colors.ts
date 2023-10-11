@@ -26,4 +26,6 @@ export const Colors = {
     Visitnow: '#F83758',
     ShoppingSwipe: '#BBBBBB',
     DeliveryOneHour: '#FFCCD5',
+    GoToCart: '#0B3689',
+    BuyNow: '#31B769'
 }

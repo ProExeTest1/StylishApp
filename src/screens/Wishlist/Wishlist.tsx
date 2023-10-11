@@ -90,9 +90,13 @@ const Wishlist = props => {
     }
   };
 
-  const searchFilterFunction = text => {
+  const searchFilterFunction = (text: string) => {
+    // Check if searched text is not blank
     if (text) {
-      const newData = data.filter(function (item) {
+      // Inserted text is not blank
+      // Filter the masterDataSource and update FilteredDataSource
+      const newData = data.filter(function (item: Products) {
+        // Applying filter for the inserted text in search bar
         const itemData = item.title
           ? item.title.toUpperCase()
           : ''.toUpperCase();
@@ -102,11 +106,12 @@ const Wishlist = props => {
       setData(newData);
       setSearch(text);
     } else {
+      // Inserted text is blank
+      // Update FilteredDataSource with masterDataSource
       setData(data2);
       setSearch(text);
     }
   };
-
   return (
     <ScreenTemplate>
       <View style={styles.Header}>
@@ -140,9 +145,7 @@ const Wishlist = props => {
       </View>
 
       <ScrollView style={{flex: 1}}>
-        <ProductsList
-          Data={stateData.products?.filter(item => item.fav == true)}
-        />
+        <ProductsList Data={data?.filter(item => item.fav == true)} />
       </ScrollView>
 
       {filterModel && (
