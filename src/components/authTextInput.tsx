@@ -1,5 +1,11 @@
-import * as React from 'react';
-import {Text, View, StyleSheet, TextInput} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import {fs, hp, wp} from '../helpers/ResponsiveFonts';
 import {AuthTextInputProps} from '../helpers/interface';
 import {Image} from 'react-native-svg';
@@ -7,9 +13,11 @@ import {Images} from '../helpers/images';
 import UserIcon from '../assets/SVGs/UserIcon.svg';
 import PasswordIcon from '../assets/SVGs/PasswordIcon.svg';
 import PasswordEye from '../assets/SVGs/PasswordEye.svg';
+import PasswordEyeHide from '../assets/SVGs/PasswordEyeHide.svg';
 import EmailIcon from '../assets/SVGs/EmailIcon.svg';
 
 const AuthTextInput = (props: AuthTextInputProps) => {
+  const [eye, setEye] = useState(true);
   return (
     <View style={[styles.container, props.style]}>
       {/* <Image source={Images.user_icon} height={50} width={50} /> */}
@@ -43,7 +51,15 @@ const AuthTextInput = (props: AuthTextInputProps) => {
         // value="abc"
       />
       {props.PasswordIcon ? (
-        <PasswordEye width={wp(24)} height={hp(24)} />
+        eye ? (
+          <TouchableOpacity onPress={() => setEye(false)}>
+            <PasswordEye width={wp(24)} height={hp(24)} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={() => setEye(true)}>
+            <PasswordEyeHide width={wp(24)} height={hp(24)} />
+          </TouchableOpacity>
+        )
       ) : null}
     </View>
   );

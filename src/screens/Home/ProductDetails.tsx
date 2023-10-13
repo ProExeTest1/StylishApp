@@ -7,9 +7,10 @@ import {
   Image,
   ScrollView,
   Pressable,
+  Alert,
 } from 'react-native';
 import ScreenTemplate from '../../components/ScreenTemplate';
-import PasswordEye from '../../assets/SVGs/PasswordEye.svg';
+import PasswordEye2 from '../../assets/SVGs/PasswordEye2.svg';
 import Compare from '../../assets/SVGs/Compare.svg';
 import ShoppingKartIconBlack from '../../assets/SVGs/ShoppingkartIcons/ShoppingKartIconBlack.svg';
 import {fs, hp, wp} from '../../helpers/ResponsiveFonts';
@@ -56,8 +57,13 @@ const ProductDetails = () => {
   };
 
   const GoToCartFn = () => {
-    setCartText('Added');
+    Alert.alert('Item added to the Cart');
+    setCartText('View Cart');
     dispatch(setCartArray([...stateData.cartarray, item]));
+  };
+
+  const ViewCart = () => {
+    navigation.navigate('Checkout');
   };
 
   return (
@@ -76,7 +82,7 @@ const ProductDetails = () => {
           style={styles.renderItemContainer}
           onPress={() => ProductDetails(item)}>
           <Image
-            source={{uri: item.image}}
+            source={{uri: item.thumbnail}}
             resizeMode="contain"
             style={styles.ProductsListImage}
           />
@@ -91,7 +97,9 @@ const ProductDetails = () => {
           <View style={styles.CartBuy}>
             <Pressable
               style={{marginRight: wp(10)}}
-              onPress={cartText == 'Go to cart' ? () => GoToCartFn() : null}>
+              onPress={
+                cartText == 'Go to cart' ? () => GoToCartFn() : () => ViewCart()
+              }>
               {/* <GoToCart /> */}
               <View style={styles.GocartView}>
                 <View style={styles.carticon}>
@@ -126,7 +134,7 @@ const ProductDetails = () => {
 
           <View style={styles.ViewSimilarContainor}>
             <Pressable style={styles.ViewSimilar}>
-              <PasswordEye />
+              <PasswordEye2 />
               <Text style={styles.ViewSimilarText}>View Similar</Text>
             </Pressable>
             <Pressable style={[styles.ViewSimilar, {paddingLeft: 10}]}>

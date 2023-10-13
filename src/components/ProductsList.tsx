@@ -96,7 +96,7 @@ const ProductsList = (props: ProductsListProps) => {
           )}
         </TouchableOpacity>
         <Image
-          source={{uri: item.image}}
+          source={{uri: item.thumbnail}}
           resizeMode="contain"
           style={styles.ProductsListImage}
         />
@@ -113,7 +113,7 @@ const ProductsList = (props: ProductsListProps) => {
           <Text style={styles.Rating}>⭐⭐⭐⭐⭐</Text>
           <Text style={[styles.Rating, {fontSize: fs(14)}]}>
             {' '}
-            {item.rating.count}
+            {item.ratingcount}
           </Text>
         </View>
       </Pressable>

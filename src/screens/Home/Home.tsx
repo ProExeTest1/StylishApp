@@ -40,7 +40,7 @@ import {Products} from '../../helpers/interface';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
 
-const baseUrl = 'https://fakestoreapi.com/products';
+const baseUrl = 'https://dummyjson.com/products';
 interface HomeProps {}
 
 const Home = (props: HomeProps) => {
@@ -73,17 +73,17 @@ const Home = (props: HomeProps) => {
       method: 'get',
       url: baseUrl,
     }).then(response => {
-      console.log(response.data);
+      console.log(response.data.products);
     });
 
     axios.get(baseUrl).then(response => {
       console.log(
         ' ---------------------------------- Response.Data-----\n ',
-        response.data,
+        response.data.products,
       );
 
-      let dataArray = response.data.map(item => {
-        return (item.fav = false), item;
+      let dataArray = response.data.products.map(item => {
+        return ((item.fav = false), (item.ratingcount = 500)), item;
       });
       console.log('dataArray----------------', dataArray);
 
@@ -101,10 +101,6 @@ const Home = (props: HomeProps) => {
 
       // setFilterData([{ category: 'View All' }, ...tempData]);
       setFilterData(tempData);
-
-      // const ids = books.map(({ title }) => title);
-      //     const filtered = books.filter(({ title }, index) =>
-      // !ids.includes(title, index + 1));
     });
   }, []);
 
@@ -152,16 +148,14 @@ const Home = (props: HomeProps) => {
           </View>
           <Pressable
             style={styles.ViewAll}
-            onPress={() => handleDOD(`women's clothing`)}>
+            onPress={() => handleDOD(`smartphones`)}>
             <Text style={styles.ViewAllText}>View all</Text>
             <RightArrow />
           </Pressable>
         </View>
         <View style={styles.FeaturesComponent}>
           <ShoppingCard
-            Data={data.filter(
-              (item, index) => item.category == `women's clothing`,
-            )}
+            Data={data.filter((item, index) => item.category == `smartphones`)}
           />
         </View>
         <View style={styles.SpecialOfferView}>
@@ -213,14 +207,14 @@ const Home = (props: HomeProps) => {
           </View>
           <Pressable
             style={styles.ViewAll}
-            onPress={() => handleDOD(`electronics`)}>
+            onPress={() => handleDOD(`skincare`)}>
             <Text style={styles.ViewAllText}>View all</Text>
             <RightArrow />
           </Pressable>
         </View>
         <View style={styles.FeaturesComponent}>
           <TrendingProductsCard
-            Data={data.filter(item => item.category == 'electronics')}
+            Data={data.filter(item => item.category == 'skincare')}
           />
         </View>
         <View style={styles.HotSummerSale}>

@@ -3,6 +3,7 @@ import {View, Text} from 'react-native';
 import Home from '../../screens/Home/Home';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import Checkout from '../../screens/Cart/Checkout';
+import ShoppingBag from '../../screens/Cart/ShoppingBag';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,7 @@ const ShoppingCartStack = () => {
         component={Checkout}
         options={{title: 'Checkout'}}
       />
+      <Stack.Screen name="ShoppingBag" component={ShoppingBag} />
     </Stack.Navigator>
   );
 };

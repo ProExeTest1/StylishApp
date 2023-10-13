@@ -5,6 +5,8 @@ const reducerSlice = createSlice({
   initialState: {
     products: [],
     cartarray: [],
+    // addresses: [],
+    // mainAddress: [],
   },
   reducers: {
     setProducts(state, action) {
@@ -13,10 +15,18 @@ const reducerSlice = createSlice({
     setCartArray(state, action) {
       state.cartarray = action.payload;
     },
+    setAddresses(state, action) {
+      state.addresses = action.payload;
+    },
+    setMainAddress(state, action) {
+      state.mainAddress = action.payload;
+    },
   },
 });
 
 export const {setProducts} = reducerSlice.actions;
 export const {setCartArray} = reducerSlice.actions;
+export const {setAddresses} = reducerSlice.actions;
+export const {setMainAddress} = reducerSlice.actions;
 
 export default reducerSlice.reducer;

@@ -37,7 +37,12 @@ export type Products = {
   price: number,
   description: string,
   category: string,
-  image: ImageProps,
+  thumbnail: ImageProps,
   rating: Rating, 
   fav: boolean,
+}
+
+export type AddressCards = {
+  id: number,
+  address: string,
 }

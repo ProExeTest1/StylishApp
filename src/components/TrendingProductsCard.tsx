@@ -80,7 +80,7 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
           )}
         </TouchableOpacity>
         <Image
-          source={{uri: item.image}}
+          source={{uri: item.thumbnail}}
           style={styles.TrendingProductsCardImage}
           resizeMode="contain"
         />

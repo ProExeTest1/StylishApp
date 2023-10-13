@@ -36,7 +36,7 @@ const MainNavigation = () => {
           options={{title: 'Preview'}}
         />
         <Stack.Screen name="MyTabs" component={MyTabs} /> */}
-        {/* {isUserLogin ? (
+        {isUserLogin ? (
           <Stack.Screen
             name="Preview"
             component={Preview}
@@ -44,13 +44,13 @@ const MainNavigation = () => {
           />
         ) : (
           <Stack.Screen name="MyTabs" component={MyTabs} />
-        )} */}
-        <Stack.Screen
+        )}
+        {/* <Stack.Screen
           name="Preview"
           component={Preview}
           options={{title: 'Preview'}}
         />
-        <Stack.Screen name="MyTabs" component={MyTabs} />
+        <Stack.Screen name="MyTabs" component={MyTabs} /> */}
         <Stack.Screen name="AuthStack" component={AuthStack} />
       </Stack.Navigator>
     </NavigationContainer>

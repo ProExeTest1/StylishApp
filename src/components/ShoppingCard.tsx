@@ -91,7 +91,7 @@ const ShoppingCard = (props: ShoppingCardProps) => {
         </TouchableOpacity>
 
         <Image
-          source={{uri: item.image}}
+          source={{uri: item.thumbnail}}
           resizeMode="contain"
           style={styles.SHoppingCardImage}
         />
@@ -108,7 +108,7 @@ const ShoppingCard = (props: ShoppingCardProps) => {
           <Text style={styles.Rating}>⭐⭐⭐⭐⭐</Text>
           <Text style={[styles.Rating, {fontSize: fs(14)}]}>
             {' '}
-            {item.rating.count}
+            {item.ratingcount}
           </Text>
         </View>
       </Pressable>

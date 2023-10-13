@@ -34,8 +34,8 @@ const ShoppingList = (props: ShoppingListProps) => {
   const dispatch = useDispatch();
   const stateData = useSelector(state => state.Reducers);
 
-  const ProductDetails = (item: Products) => {
-    navigation.replace('ProductDetails', {item});
+  const ShoppingBag = (item: Products) => {
+    navigation.navigate('ShoppingBag', {item});
   };
 
   const HeartSelection = (item: Products) => {
@@ -83,7 +83,7 @@ const ShoppingList = (props: ShoppingListProps) => {
 
   const renderItem = ({item}: {item: Products}) => {
     return (
-      <View>
+      <Pressable style={styles.mainContainer} onPress={() => ShoppingBag(item)}>
         <View style={styles.renderItemContainer}>
           <View style={styles.ProductImage}>
             <TouchableOpacity
@@ -96,7 +96,7 @@ const ShoppingList = (props: ShoppingListProps) => {
               )}
             </TouchableOpacity>
             <Image
-              source={{uri: item.image}}
+              source={{uri: item.thumbnail}}
               resizeMode="contain"
               style={styles.ShoppingListImage}
             />
@@ -116,14 +116,18 @@ const ShoppingList = (props: ShoppingListProps) => {
               <Text style={styles.Rating}>⭐⭐⭐⭐⭐</Text>
               <Text style={[styles.Rating, {fontSize: fs(14)}]}>
                 {' '}
-                {item.rating.count}
+                {item.ratingcount}
               </Text>
             </View>
             <Text style={styles.PriceText}>${item.price}</Text>
           </View>
         </View>
         <View style={styles.hrLine}></View>
-      </View>
+        <View style={styles.TotalOrderView}>
+          <Text style={styles.TotalOrderText}>Total Order (1) :</Text>
+          <Text style={styles.TotalOrderPriceText}>${item.price}</Text>
+        </View>
+      </Pressable>
     );
   };
   return (
@@ -161,11 +165,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     // borderWidth: 0.17,
     height: 'auto',
-    // elevation: 2,
-    // shadowColor: '#000',
-    // shadowOffset: {width: 0, height: 2},
-    // shadowOpacity: 0.2,
-    // shadowRadius: 2,
   },
   ShoppingListImage: {
     height: hp(167),
@@ -249,11 +248,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
+    // elevation: 2,
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.2,
+    // shadowRadius: 2,
     position: 'absolute',
     alignSelf: 'flex-end',
     marginVertical: wp(100),
@@ -270,14 +269,47 @@ const styles = StyleSheet.create({
   },
   ProductImage: {},
   hrLine: {
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 0.3},
-    shadowOpacity: 0.3,
-    shadowRadius: 0.3,
-    borderWidth: 0.3,
+    // elevation: 1,
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 0.3},
+    // shadowOpacity: 0.3,
+    // shadowRadius: 0.3,
+    borderWidth: 0.5,
     borderColor: Colors.LightGrey,
-    marginTop: hp(18),
+    // marginTop: hp(18),
+    bottom: hp(20),
     marginHorizontal: wp(-12),
+  },
+  TotalOrderView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  TotalOrderText: {
+    fontSize: fs(12),
+    fontFamily: 'Montserrat-Regular',
+    fontWeight: '500',
+    color: Colors.Black,
+    bottom: hp(10),
+  },
+  TotalOrderPriceText: {
+    fontSize: fs(12),
+    fontFamily: 'Montserrat-Regular',
+    fontWeight: '600',
+    color: Colors.Black,
+    bottom: hp(10),
+  },
+  mainContainer: {
+    marginBottom: hp(50),
+    elevation: 2,
+    borderWidth: 0.1,
+    height: hp(200),
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: {width: 0.3, height: 1},
+    shadowOpacity: 0.2,
+    shadowRadius: 0.5,
+    paddingHorizontal: wp(10),
+    paddingVertical: hp(10),
+    backgroundColor: Colors.white,
   },
 });

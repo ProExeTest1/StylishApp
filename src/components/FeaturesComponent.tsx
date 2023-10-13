@@ -47,7 +47,11 @@ const FeaturesComponent = (props: FeaturesComponentProps) => {
       <Pressable
         style={styles.renderItemContainer}
         onPress={() => handlePress(item.category)}>
-        <Image source={{uri: item.image}} style={styles.FeaturesImage} />
+        <Image
+          source={{uri: item.thumbnail}}
+          resizeMode="cover"
+          style={styles.FeaturesImage}
+        />
         <Text style={styles.FeatureText}>
           {item.category[0].toUpperCase() + item.category.slice(1)}
         </Text>

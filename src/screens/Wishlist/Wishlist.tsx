@@ -80,13 +80,15 @@ const Wishlist = props => {
     setFilterModel(!filterModel);
 
     if (id == '1') {
-      let tempData = [...data];
+      let tempData = [...stateData.products];
       tempData.sort((a, b) => b.price - a.price);
       setData(tempData);
+      dispatch(setProducts(tempData));
     } else if (id == '2') {
-      let tempData = [...data];
+      let tempData = [...stateData.products];
       tempData.sort((a, b) => a.price - b.price);
       setData(tempData);
+      dispatch(setProducts(tempData));
     }
   };
 
@@ -95,7 +97,7 @@ const Wishlist = props => {
     if (text) {
       // Inserted text is not blank
       // Filter the masterDataSource and update FilteredDataSource
-      const newData = data.filter(function (item: Products) {
+      const newData = stateData.products.filter(function (item: Products) {
         // Applying filter for the inserted text in search bar
         const itemData = item.title
           ? item.title.toUpperCase()
@@ -104,11 +106,13 @@ const Wishlist = props => {
         return itemData.indexOf(textData) > -1;
       });
       setData(newData);
+      dispatch(setProducts(newData));
       setSearch(text);
     } else {
       // Inserted text is blank
       // Update FilteredDataSource with masterDataSource
       setData(data2);
+      dispatch(setProducts(data2));
       setSearch(text);
     }
   };
@@ -145,7 +149,9 @@ const Wishlist = props => {
       </View>
 
       <ScrollView style={{flex: 1}}>
-        <ProductsList Data={data?.filter(item => item.fav == true)} />
+        <ProductsList
+          Data={stateData.products?.filter(item => item.fav == true)}
+        />
       </ScrollView>
 
       {filterModel && (

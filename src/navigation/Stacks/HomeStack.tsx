@@ -5,6 +5,8 @@ import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import Products from '../../screens/Home/ProductsScreen';
 import ProductsScreen from '../../screens/Home/ProductsScreen';
 import ProductDetails from '../../screens/Home/ProductDetails';
+import Checkout from '../../screens/Cart/Checkout';
+import ShoppingBag from '../../screens/Cart/ShoppingBag';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +30,8 @@ const HomeStack = () => {
       <Stack.Screen name="Home" component={Home} options={{title: 'Home'}} />
       <Stack.Screen name="ProductsScreen" component={ProductsScreen} />
       <Stack.Screen name="ProductDetails" component={ProductDetails} />
+      <Stack.Screen name="Checkout" component={Checkout} />
+      <Stack.Screen name="ShoppingBag" component={ShoppingBag} />
     </Stack.Navigator>
   );
 };
