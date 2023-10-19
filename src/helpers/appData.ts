@@ -33,12 +33,13 @@ export const FearuresData : Array<FeatureType> = [
 ]
 
 export type AdsCardsType= {
-    Image: Image;
+    Image?: Image;
+    category?: string,
 }
 export const AdsCardsData : Array<AdsCardsType> = [
-    { Image: Images.AdsCard },
-    { Image: Images.AdsCard },
-    {Image : Images.AdsCard},
+    { Image: Images.AdsCard, category: 'smartphones' },
+    { Image: Images.AdsCard, category: 'laptops' },
+    { Image: Images.AdsCard, category: 'fragrances' },
 ]
 
 export type ShoppingCardType= {
@@ -103,4 +104,12 @@ export const TrendingProductsData : Array<ShoppingCardType> = [
     //     label: 'All Products',
     //     value: 'allproducts',
     //   },
+ ]
+    
+  export const radioButtons2: RadioButtonProps[] = [
+      {
+        id: '1', // acts as primary key, should be unique and non-empty string
+        label: 'Rating',
+        value: 'rating',
+      },
     ]

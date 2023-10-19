@@ -125,6 +125,7 @@ const ShoppingCard = (props: ShoppingCardProps) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         ref={flatListRef}
+        bounces={false}
       />
       <TouchableOpacity style={styles.Button} onPress={ShoppingSwipe}>
         <Text>{swipeIcon}</Text>

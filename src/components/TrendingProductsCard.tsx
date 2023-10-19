@@ -120,6 +120,7 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         ref={flatListRef}
+        bounces={false}
       />
       <TouchableOpacity style={styles.Button} onPress={ShoppingSwipe}>
         <Text>{swipeIcon}</Text>

@@ -78,6 +78,7 @@ const MyTabs: React.FC<{navigation: any}> = ({navigation}) => {
         component={WishListStack}
         options={{
           tabBarIcon: props => <CustomWishListTabBarButton {...props} />,
+          // unmountOnBlur: true,
         }}
       />
       {/* CardStack */}

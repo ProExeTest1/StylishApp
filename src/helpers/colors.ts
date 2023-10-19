@@ -27,5 +27,7 @@ export const Colors = {
     ShoppingSwipe: '#BBBBBB',
     DeliveryOneHour: '#FFCCD5',
     GoToCart: '#0B3689',
-    BuyNow: '#31B769'
+    BuyNow: '#31B769',
+    ProceedPaymentBackground: '#F8F8F8',
+    Green: 'green',
 }

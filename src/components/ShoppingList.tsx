@@ -19,7 +19,7 @@ import Carousel from 'react-native-snap-carousel';
 import {Products} from '../helpers/interface';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {setProducts} from '../Store/Reducer';
+import {setCartArray, setProducts} from '../Store/Reducer';
 
 interface ShoppingListProps {
   Data?: Array<Products>;
@@ -35,11 +35,22 @@ const ShoppingList = (props: ShoppingListProps) => {
   const stateData = useSelector(state => state.Reducers);
 
   const ShoppingBag = (item: Products) => {
+    HideBottomTab();
     navigation.navigate('ShoppingBag', {item});
   };
-
+  const HideBottomTab = () => {
+    navigation.getParent()?.setOptions({
+      tabBarStyle: {
+        display: 'none',
+      },
+    });
+    return () =>
+      navigation.getParent()?.setOptions({
+        tabBarStyle: undefined,
+      });
+  };
   const HeartSelection = (item: Products) => {
-    const updatedProducts = stateData.products.map((ele: Products) => {
+    let updatedProducts = stateData.products.map((ele: Products) => {
       if (ele.id === item.id) {
         const updatedEle = Object.assign({}, ele); // Create a new object by copying properties
         updatedEle.fav = !updatedEle.fav; // Update the 'fav' property
@@ -52,21 +63,24 @@ const ShoppingList = (props: ShoppingListProps) => {
         return ele;
       }
     });
-
-    // if (item.fav == true) {
-    //   setFav(false);
-    // } else {
-    //   setFav(true);
-    // }
-
     dispatch(setProducts(updatedProducts));
 
+    let currentProducts = [...updatedProducts];
+    let currentCartarray = [...stateData.cartarray];
+    console.log('currentProducts----------', currentProducts);
+    console.log('currentCartarray----------', currentCartarray);
+
+    let resultArray = currentProducts.filter(ele1 =>
+      currentCartarray.find(ele2 => ele2.id === ele1.id),
+    );
+
+    console.log('resultArray-------------', resultArray);
+
+    dispatch(setCartArray(resultArray));
     console.log(
       'updatedProducts in Products List ------------------------- ',
       updatedProducts,
     );
-
-    // navigation.replace('ProductsScreen', {category: item.category});
   };
 
   useEffect(() => {
@@ -80,6 +94,11 @@ const ShoppingList = (props: ShoppingListProps) => {
     console.log('UseEffect--------------tempArray', tempArray);
     console.log('UseEffect--------------Hearts', hearts);
   }, [stateData.products]);
+
+  const CloseIconHandle = (item: Products) => {
+    const dataArray = stateData.cartarray.filter(ele => ele.id != item.id);
+    dispatch(setCartArray(dataArray));
+  };
 
   const renderItem = ({item}: {item: Products}) => {
     return (
@@ -102,9 +121,15 @@ const ShoppingList = (props: ShoppingListProps) => {
             />
           </View>
           <View style={styles.ProductDetails}>
-            <Text style={styles.TitleText}>
-              {item.title.substring(0, 50)}...
-            </Text>
+            <View style={styles.closeIconView}>
+              <Text style={styles.TitleText}>
+                {item.title.substring(0, 20)}...
+              </Text>
+              <Pressable onPress={() => CloseIconHandle(item)}>
+                <Image source={Images.closeIcon} style={styles.closeIcon} />
+              </Pressable>
+            </View>
+
             <Text style={styles.DescText}>
               {item.description.substring(0, 70)}...
             </Text>
@@ -143,6 +168,7 @@ const ShoppingList = (props: ShoppingListProps) => {
         // numColumns={2}
         showsHorizontalScrollIndicator={false}
         ref={flatListRef}
+        bounces={false}
       />
     </View>
   );
@@ -311,5 +337,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(10),
     paddingVertical: hp(10),
     backgroundColor: Colors.white,
+  },
+  closeIcon: {
+    height: hp(15),
+    width: wp(15),
+  },
+  closeIconView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });

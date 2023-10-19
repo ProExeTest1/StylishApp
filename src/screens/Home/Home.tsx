@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Pressable,
+  Image,
 } from 'react-native';
 import ScreenTemplate from '../../components/ScreenTemplate';
 import DrawerIcon from '../../assets/SVGs/DrawerIcon.svg';
@@ -39,6 +40,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Products} from '../../helpers/interface';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
+import BackIcon from '../../assets/SVGs/BackIcon.svg';
+import {Images} from '../../helpers/images';
 
 const baseUrl = 'https://dummyjson.com/products';
 interface HomeProps {}
@@ -69,51 +72,51 @@ const Home = (props: HomeProps) => {
       });
   };
   useEffect(() => {
-    axios({
-      method: 'get',
-      url: baseUrl,
-    }).then(response => {
-      console.log(response.data.products);
+    // axios({
+    //   method: 'get',
+    //   url: baseUrl,
+    // }).then(response => {
+    //   console.log(response.data.products);
+    // });
+
+    // axios.get(baseUrl).then(response => {
+    //   console.log(
+    //     ' ---------------------------------- Response.Data-----\n ',
+    //     response.data.products,
+    //   );
+
+    // let dataArray = response.data.products.map(item => {
+    //   return ((item.fav = false), (item.ratingcount = 500)), item;
+    // });
+    // console.log('dataArray----------------', dataArray);
+
+    const dataArray = stateData.products;
+
+    // dispatch(setProducts(dataArray));
+    setData(dataArray);
+    setCategoryData(dataArray);
+    const ids = dataArray.map(({category}: Products) => category);
+    const tempData = dataArray.filter(({category}: Products, index: number) => {
+      return !ids.includes(category, index + 1);
     });
 
-    axios.get(baseUrl).then(response => {
-      console.log(
-        ' ---------------------------------- Response.Data-----\n ',
-        response.data.products,
-      );
+    console.log('--------------------tempData', tempData);
 
-      let dataArray = response.data.products.map(item => {
-        return ((item.fav = false), (item.ratingcount = 500)), item;
-      });
-      console.log('dataArray----------------', dataArray);
-
-      dispatch(setProducts(dataArray));
-      setData(dataArray);
-      setCategoryData(dataArray);
-      const ids = dataArray.map(({category}: Products) => category);
-      const tempData = dataArray.filter(
-        ({category}: Products, index: number) => {
-          return !ids.includes(category, index + 1);
-        },
-      );
-
-      console.log('--------------------tempData', tempData);
-
-      // setFilterData([{ category: 'View All' }, ...tempData]);
-      setFilterData(tempData);
-    });
+    // setFilterData([{ category: 'View All' }, ...tempData]);
+    setFilterData(tempData);
+    // });
   }, []);
 
   return (
     <ScreenTemplate>
       <View style={styles.Header}>
-        <TouchableOpacity style={styles.DrawerIcon}>
+        <TouchableOpacity>
           <DrawerIcon />
         </TouchableOpacity>
-        <View style={styles.StylishLogo}>
-          <StylishLogo />
-        </View>
-        <View style={styles.ProfilePic}>
+        {/* <View style={styles.StylishLogo}> */}
+        <StylishLogo />
+        {/* </View> */}
+        <View>
           <ProfilePic />
         </View>
       </View>
@@ -121,20 +124,22 @@ const Home = (props: HomeProps) => {
         <SearchComponent />
       </View>
       <View style={styles.Features}>
-        <View style={styles.AllFeaturedView}>
-          <Text style={styles.AllFeatured}>All Featured</Text>
+        {/* <View style={styles.AllFeaturedView}> */}
+        <Text style={styles.AllFeatured}>All Featured</Text>
+        {/* </View> */}
+        <View style={{flexDirection: 'row'}}>
+          <Pressable style={styles.Sort}>
+            <Text>Sort</Text>
+            <SortIcon />
+          </Pressable>
+          <Pressable style={styles.Filter}>
+            <Text>Filter</Text>
+            <FilterIcon />
+          </Pressable>
         </View>
-        <Pressable style={styles.Sort}>
-          <Text>Sort</Text>
-          <SortIcon />
-        </Pressable>
-        <Pressable style={styles.Filter}>
-          <Text>Filter</Text>
-          <FilterIcon />
-        </Pressable>
       </View>
 
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <View style={styles.FeaturesComponent}>
           <FeaturesComponent Data={filterData} />
         </View>
@@ -180,11 +185,11 @@ const Home = (props: HomeProps) => {
               <GroupStars />
             </View>
             <View style={styles.Heels}>
-              <Heels />
+              <Image source={Images.iphone} style={styles.HeelsPhoto} />
             </View>
           </View>
-          <View style={styles.HeelsView}>
-            <Text style={styles.HeelsText1}>Flat and Heels</Text>
+          <View style={{marginTop: 35}}>
+            <Text style={styles.HeelsText1}>Iphone 11</Text>
             <Text style={styles.HeelsText2}>
               Stand a chance to get rewarded
             </Text>
@@ -244,20 +249,21 @@ const Home = (props: HomeProps) => {
                   backgroundColor: Colors.Visitnow,
                   borderColor: Colors.Visitnow,
                 },
-              ]}>
+              ]}
+              onPress={() => handleDOD(`ViewAll`)}>
               <Text style={styles.ViewAllText}>View all</Text>
               <RightArrow />
             </Pressable>
           </View>
         </View>
-        <View style={styles.sponserdView}>
+        {/* <View style={styles.sponserdView}>
           <Text style={styles.sponserdText}>Sponserd</Text>
           <Sponsered />
           <View style={styles.FiftyOffView}>
             <Text style={styles.FiftyOff}>up to 50% Off</Text>
             <Text style={[styles.FiftyOff, {width: 'auto'}]}>{'>'}</Text>
           </View>
-        </View>
+        </View> */}
       </ScrollView>
     </ScreenTemplate>
   );
@@ -269,22 +275,23 @@ const styles = StyleSheet.create({
   Header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  DrawerIcon: {width: '20%'},
-  StylishLogo: {width: '60%', alignItems: 'center'},
-  ProfilePic: {width: '20%', alignItems: 'flex-end'},
+  // DrawerIcon: {backgroundColor: 'red'},
+  // StylishLogo: {alignItems: 'center', backgroundColor: 'green'},
+  // ProfilePic: {alignItems: 'flex-end', backgroundColor: 'yellow'},
   SearchComponent: {
     alignItems: 'center',
-    paddingVertical: hp(16),
+    marginVertical: hp(16),
   },
   Features: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     // borderWidth: 1,
     marginBottom: hp(10),
   },
   AllFeaturedView: {
-    width: wp(192),
+    // width: wp(192),
   },
   Sort: {
     width: wp(61),
@@ -341,9 +348,12 @@ const styles = StyleSheet.create({
   Adscard: {
     justifyContent: 'center',
     alignItems: 'center',
+    marginVertical: hp(1),
+    // backgroundColor: 'red',
     // borderWidth: 1,
     height: hp(189),
     marginTop: hp(16),
+    padding: hp(1.2),
   },
   DealoftheDay: {
     flexDirection: 'row',
@@ -451,8 +461,8 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
   },
   HeelsText1: {
-    right: wp(50),
-    top: hp(50),
+    // right: wp(50),
+    // top: hp(50),
     color: Colors.Black,
     fontSize: fs(16),
     fontWeight: '500',
@@ -461,8 +471,8 @@ const styles = StyleSheet.create({
     width: wp(150),
   },
   HeelsText2: {
-    right: wp(50),
-    top: hp(50),
+    // right: wp(50),
+    // top: hp(50),
     color: Colors.Black,
     fontSize: fs(10),
     fontWeight: '400',
@@ -478,23 +488,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: hp(24),
     width: wp(92),
-    // paddingHorizontal: wp(8),
-    paddingVertical: hp(4),
     borderRadius: 4,
     borderColor: Colors.Visitnow,
     backgroundColor: Colors.Visitnow,
-    // marginTop: hp(8),
-    // marginLeft: wp(24),
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    right: wp(0),
-    top: hp(60),
+    alignSelf: 'flex-end',
+    marginTop: 10,
   },
   HotSummerSale: {
     marginTop: hp(12),
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: hp(10),
   },
   NewArrivals: {
     flexDirection: 'row',
@@ -545,5 +552,9 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     width: wp(327),
     justifyContent: 'space-between',
+  },
+  HeelsPhoto: {
+    height: hp(100),
+    width: wp(100),
   },
 });

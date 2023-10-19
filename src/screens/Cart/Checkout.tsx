@@ -7,6 +7,8 @@ import {
   TextInput,
   ScrollView,
   FlatList,
+  Image,
+  Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -14,13 +16,16 @@ import Location from '../../assets/SVGs/Location.svg';
 import EditIcon from '../../assets/SVGs/EditIcon.svg';
 import PlusIcon from '../../assets/SVGs/PlusIcon.svg';
 import VisacardIcon from '../../assets/SVGs/VisacardIcon.svg';
+import BackIcon from '../../assets/SVGs/BackIcon.svg';
 import {fs, hp, wp} from '../../helpers/ResponsiveFonts';
 import {Colors} from '../../helpers/colors';
 import ScreenTemplate from '../../components/ScreenTemplate';
 import ShoppingList from '../../components/ShoppingList';
 import {AddressCards, Products} from '../../helpers/interface';
-import {setAddresses, setMainAddress} from '../../Store/Reducer';
+import {setAddresses, setAddresses2, setMainAddress} from '../../Store/Reducer';
 import firestore from '@react-native-firebase/firestore';
+import ReactNativeModal from 'react-native-modal';
+import {Images} from '../../helpers/images';
 
 const Checkout = () => {
   const [filterModel, setFilterModel] = useState(false);
@@ -30,9 +35,18 @@ const Checkout = () => {
   const item = route.params?.item;
   const navigation = useNavigation();
   const [filterData, setFilterData] = useState([]);
-  const [addressCards, setAddressCards] = useState([{id: 0, address: ''}]);
-  const [address, setAddress] = useState('');
+  const [addressCards, setAddressCards] = useState([{}]);
+  // const [address, setAddress] = useState('');
   const [textInputDis, setTextInputDis] = useState(true);
+
+  const [flatnum, setFlatNum] = useState('');
+  const [modalId, setModalId] = useState(0);
+  console.log('modalId 2435678976854', modalId);
+
+  const [socname, setSocName] = useState('');
+  const [streetname, setStreetName] = useState('');
+  const [pin, setPin] = useState('');
+  const [city, setCity] = useState('');
 
   useEffect(() => {
     const data = stateData.products;
@@ -58,112 +72,233 @@ const Checkout = () => {
     return (priceCount += item.price);
   });
 
-  const addAddressFirestore = () => {
-    // firestore()
-    //   .collection('Users')
-    //   .doc(`${G_UserInfo.user.id}`)
-    //   .set({
-    //     name: 'john',
-    //   })
-    //   .then(() => {
-    //     console.log('User added!');
-    //     navigation.navigate('MyTabs', {G_UserInfo});
-    //   });
+  const ContinueAddress = () => {
+    let Numreg = /^\d+$/;
+
+    const passData = {
+      isNew: modalId == 0 ? true : false,
+      data: {
+        id: modalId == 0 ? stateData.addresses?.length + 1 : modalId,
+        flatNo: flatnum,
+        societyName: socname,
+        streetName: streetname,
+        pin: pin,
+        city: city,
+      },
+    };
+
+    if (flatnum == '') Alert.alert('Please enter Flat Number');
+    else if (socname == '') Alert.alert('Please enter Society Name');
+    else if (streetname == '') Alert.alert('Please enter Street Name');
+    else if (city == '') Alert.alert('Please enter city Name');
+    else if (!pin.match(Numreg)) Alert.alert('Enter valid Pincode');
+    else {
+      dispatch(setAddresses(passData));
+      setCity('');
+      setFlatNum('');
+      setPin('');
+      setSocName('');
+      setStreetName('');
+      setFilterModel(false);
+      setModalId(0);
+    }
   };
 
-  const AddressStore = () => {
-    dispatch(setAddresses([...stateData.addresses, stateData.mainAddress]));
+  const closeModal = () => {
+    console.log('close');
+    setModalId(0);
+    setCity('');
+    setFlatNum('');
+    setPin('');
+    setSocName('');
+    setStreetName('');
+    setFilterModel(false);
   };
-  const setAddressRedux = (text: string) => {
-    dispatch(setMainAddress(text));
+  console.log('stateData.addresses', stateData.addresses);
+
+  const handleAddress = item => {
+    console.log('item', item);
+    // dispatch(setMainAddress(text));
+    setModalId(item?.id || 0);
+    setCity(item?.city);
+    setFlatNum(item?.flatNo);
+    setPin(item?.pin);
+    setSocName(item?.societyName);
+    setStreetName(item?.streetName);
+    setFilterModel(true);
   };
   return (
     <ScreenTemplate>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.drawerIcon} onPress={Back}>
-          <Text style={styles.backIcon}>{'<'}</Text>
+        <TouchableOpacity
+          hitSlop={{bottom: 10, left: 10, right: 10, top: 10}}
+          style={styles.drawerIcon}
+          onPress={Back}>
+          <BackIcon />
         </TouchableOpacity>
         <View style={styles.profilePic}>
           <Text style={styles.checkoutText}>Checkout</Text>
         </View>
+        <View />
       </View>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.hrLine}></View>
 
-        <View style={styles.deliveryAddView}>
-          <Location />
-          <Text style={styles.deliveryAddText}>Delivery Address</Text>
-        </View>
+      {stateData.cartarray.length > 0 ? (
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}>
+          <View style={styles.hrLine}></View>
 
-        <View style={styles.addressCardContainer}>
-          <FlatList
-            data={addressCards}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({item, index}) => (
-              <View style={{flexDirection: 'row'}}>
-                <View style={styles.addressCard} key={index}>
-                  <TouchableOpacity style={{alignSelf: 'flex-end'}}>
-                    <EditIcon />
-                  </TouchableOpacity>
-                  <Text style={styles.addressText}>Address :</Text>
-                  <TextInput
-                    style={styles.addressTextInput}
-                    multiline
-                    placeholder="Enter Address..."
-                    placeholderTextColor={Colors.Grey}
-                    onChangeText={text => setAddress(text)}
-                    // editable={addressCards.length - 1 != item.id ? false : true}
-                    editable={true}
-                    value={item.address}
-                  />
+          <View style={styles.deliveryAddView}>
+            <Location />
+            <Text style={styles.deliveryAddText}>Delivery Address</Text>
+          </View>
+
+          <View style={styles.addressCardContainer}>
+            <FlatList
+              data={stateData.addresses}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({item, index}) => (
+                <View style={{flexDirection: 'row'}}>
+                  <View style={styles.addressCard} key={index}>
+                    <TouchableOpacity
+                      style={{alignSelf: 'flex-end'}}
+                      // onPress={() => setFilterModel(!filterModel)}
+                      onPress={() => handleAddress(item)}>
+                      <EditIcon />
+                    </TouchableOpacity>
+                    <Text style={styles.addressText}>Address :</Text>
+                    <Text>
+                      {item?.flatNo} {item?.societyName} {item?.streetName}{' '}
+                      {item?.city},{item?.pin}
+                    </Text>
+                  </View>
                 </View>
-                {addressCards.length - 1 == index ? (
-                  <TouchableOpacity
-                    style={styles.addressCardPlusButton}
-                    // onPress={addAddressCard}
-                  >
-                    <PlusIcon />
-                  </TouchableOpacity>
-                ) : null}
-              </View>
-            )}
-            horizontal
-          />
-        </View>
-
-        <Text style={styles.ShoppingListText}>Shopping List</Text>
-
-        <ShoppingList Data={stateData.cartarray} />
-        <View style={styles.OrderTotalView}>
-          <View style={styles.OrderView}>
-            <Text style={styles.OrderText}>Order</Text>
-            <Text style={styles.OrderText}>${priceCount}</Text>
+              )}
+              ListFooterComponent={
+                <TouchableOpacity
+                  style={styles.addressCardPlusButton}
+                  onPress={() => handleAddress('')}
+                  // onPress={() => handleAddress()}
+                >
+                  <PlusIcon />
+                </TouchableOpacity>
+              }
+              horizontal
+            />
           </View>
-          <View style={styles.OrderView}>
-            <Text style={styles.OrderText}>Shipping</Text>
-            <Text style={styles.OrderText}>${5}</Text>
+
+          <Text style={styles.ShoppingListText}>Shopping List</Text>
+
+          <ShoppingList Data={stateData.cartarray} />
+          <View style={styles.OrderTotalView}>
+            <View style={styles.OrderView}>
+              <Text style={styles.OrderText}>Order</Text>
+              <Text style={styles.OrderText}>${priceCount}</Text>
+            </View>
+            <View style={styles.OrderView}>
+              <Text style={styles.OrderText}>Shipping</Text>
+              <Text style={styles.OrderText}>${5}</Text>
+            </View>
+            <View style={styles.OrderView}>
+              <Text style={[styles.OrderText, {color: Colors.Black}]}>
+                Total
+              </Text>
+              <Text style={[styles.OrderText, {color: Colors.Black}]}>
+                ${priceCount + 5}
+              </Text>
+            </View>
           </View>
-          <View style={styles.OrderView}>
-            <Text style={[styles.OrderText, {color: Colors.Black}]}>Total</Text>
+          <View style={[styles.hrLine, {bottom: hp(40)}]}></View>
+          <View style={[styles.OrderView, {paddingHorizontal: wp(10)}]}>
             <Text style={[styles.OrderText, {color: Colors.Black}]}>
-              ${priceCount + 5}
+              Payment
             </Text>
           </View>
+          {[1, 2, 3, 4].map(item => (
+            <View style={styles.PaymentComponent}>
+              <VisacardIcon />
+              <Text style={styles.OrderText}>{`******5307`}</Text>
+            </View>
+          ))}
+          <TouchableOpacity style={styles.ContinueComponent}>
+            <Text style={styles.ContinueText}>Continue</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      ) : (
+        <View style={styles.EmptyBoxIllustratorView}>
+          <Image
+            source={Images.EmptyBoxIllustrator}
+            style={styles.EmptyBoxIllustrator}
+          />
         </View>
-        <View style={[styles.hrLine, {bottom: hp(40)}]}></View>
-        <View style={[styles.OrderView, {paddingHorizontal: wp(10)}]}>
-          <Text style={[styles.OrderText, {color: Colors.Black}]}>Payment</Text>
-        </View>
-        {[1, 2, 3, 4].map(item => (
-          <View style={styles.PaymentComponent}>
-            <VisacardIcon />
-            <Text style={styles.OrderText}>{`******5307`}</Text>
+      )}
+
+      {filterModel && (
+        <ReactNativeModal
+          isVisible={filterModel}
+          swipeDirection={'down'}
+          onSwipeComplete={closeModal}
+          style={{
+            backgroundColor: 'transparent',
+            justifyContent: 'center',
+          }}>
+          <View style={styles.FilterModalView}>
+            <View style={styles.FilterSortTextView}>
+              <Text style={styles.SortText}>Address</Text>
+              <TouchableOpacity onPress={closeModal}>
+                <Image source={Images.closeIcon} style={styles.closeIcon} />
+              </TouchableOpacity>
+            </View>
+            {/* <View style={styles.FlatNum} >
+
+            </View> */}
+            <View style={styles.addressView}>
+              <TextInput
+                placeholder="Flat No. / Building No."
+                placeholderTextColor={Colors.LightGrey}
+                style={styles.FlatNum}
+                onChangeText={text => setFlatNum(text)}
+                value={flatnum}
+              />
+              <TextInput
+                placeholder="Society / Apartment Name"
+                placeholderTextColor={Colors.LightGrey}
+                style={styles.FlatNum}
+                onChangeText={text => setSocName(text)}
+                value={socname}
+              />
+              <TextInput
+                placeholder="Stree Name / Landmark"
+                placeholderTextColor={Colors.LightGrey}
+                style={styles.FlatNum}
+                onChangeText={text => setStreetName(text)}
+                value={streetname}
+              />
+              <View style={styles.PinCityView}>
+                <TextInput
+                  placeholder="Pin"
+                  placeholderTextColor={Colors.LightGrey}
+                  style={[styles.FlatNum, {width: '47%'}]}
+                  onChangeText={text => setPin(text)}
+                  value={pin}
+                />
+                <TextInput
+                  placeholder="City"
+                  placeholderTextColor={Colors.LightGrey}
+                  style={[styles.FlatNum, {width: '47%'}]}
+                  onChangeText={text => setCity(text)}
+                  value={city}
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.ContinueTouch}
+                onPress={ContinueAddress}>
+                <Text style={styles.ContinueAddText}>Continue</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        ))}
-        <TouchableOpacity style={styles.ContinueComponent}>
-          <Text style={styles.ContinueText}>Continue</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        </ReactNativeModal>
+      )}
     </ScreenTemplate>
   );
 };
@@ -182,9 +317,15 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  drawerIcon: {width: '38%'},
-  profilePic: {width: '100%', position: 'absolute', alignItems: 'center'},
+  // drawerIcon: {width: '38%'},
+  // profilePic: {
+  //   // width: '100%',
+  //   // position: 'absolute',
+  //   alignItems: 'center',
+  //   // backgroundColor: 'red',
+  // },
   scrollView: {flex: 1, marginTop: hp(10)},
   addressCard: {
     paddingVertical: hp(12),
@@ -316,6 +457,68 @@ const styles = StyleSheet.create({
     marginBottom: hp(10),
     marginTop: hp(15),
     backgroundColor: Colors.ForgetPass,
+  },
+  FilterModalView: {
+    height: hp(400),
+    width: '100%',
+    backgroundColor: 'white',
+    // borderTopLeftRadius: 20,
+    // borderTopRightRadius: 20,
+    paddingHorizontal: wp(20),
+  },
+  SortText: {
+    color: 'black',
+    // fontWeight: 'bold',
+    fontSize: fs(20),
+    marginTop: hp(20),
+    // alignSelf: 'center',
+  },
+  FilterSortTextView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  closeIcon: {
+    height: hp(18),
+    width: wp(18),
+    marginTop: hp(20),
+  },
+  FlatNum: {
+    borderWidth: 0.5,
+    marginTop: hp(15),
+    paddingVertical: hp(10),
+    paddingHorizontal: wp(10),
+  },
+  PinCityView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  addressView: {
+    marginTop: hp(20),
+  },
+  ContinueTouch: {
+    borderWidth: 0.5,
+    paddingHorizontal: wp(10),
+    paddingVertical: hp(10),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: hp(20),
+    backgroundColor: Colors.ForgetPass,
+  },
+  ContinueAddText: {
+    fontFamily: 'Montserrat-Regular',
+    fontWeight: '700',
+    fontSize: fs(16),
+    color: Colors.white,
+  },
+  EmptyBoxIllustrator: {
+    height: hp(100),
+    width: wp(100),
+  },
+  EmptyBoxIllustratorView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

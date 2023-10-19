@@ -67,6 +67,7 @@ const FeaturesComponent = (props: FeaturesComponentProps) => {
         contentContainerStyle={styles.FlatListStyle}
         horizontal
         showsHorizontalScrollIndicator={false}
+        bounces={false}
       />
     </View>
   );
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
     height: hp(56),
     width: wp(56),
     borderRadius: 50,
-    borderWidth: 0.3,
+    // borderWidth: 0.1,
   },
   FeatureText: {
     // borderWidth: 1,

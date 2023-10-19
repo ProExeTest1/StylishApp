@@ -27,13 +27,14 @@ import ProductsList from '../../components/ProductsList';
 import {setCartArray} from '../../Store/Reducer';
 import GoToCartIcon from '../../assets/SVGs/GoToCartIcon.svg';
 import BuyNowIcon from '../../assets/SVGs/BuyNowIcon.svg';
+import BackIcon from '../../assets/SVGs/BackIcon.svg';
 
 const ProductDetails = () => {
   const [filterModel, setFilterModel] = useState(false);
   const dispatch = useDispatch();
   const stateData = useSelector(state => state.Reducers);
   const route = useRoute();
-  const item = route.params.item;
+  const item = route?.params?.item;
   const navigation = useNavigation();
   const [filterData, setFilterData] = useState([]);
   const [cartText, setCartText] = useState('Go to cart');
@@ -65,19 +66,24 @@ const ProductDetails = () => {
   const ViewCart = () => {
     navigation.navigate('Checkout');
   };
+  const GotoBuyNow = () => {
+    navigation.navigate('ShoppingBag', {item});
+  };
 
   return (
     <ScreenTemplate>
       <View style={styles.Header}>
         <TouchableOpacity style={styles.DrawerIcon} onPress={Back}>
-          <Text style={styles.BackIcon}>{'<'}</Text>
+          <BackIcon />
         </TouchableOpacity>
         <View style={styles.ProfilePic}>
           <ShoppingKartIconBlack />
         </View>
       </View>
 
-      <ScrollView style={styles.scrollView}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}>
         <View
           style={styles.renderItemContainer}
           onPress={() => ProductDetails(item)}>
@@ -119,7 +125,9 @@ const ProductDetails = () => {
                 </View>
                 <View
                   style={[styles.cartbox, {backgroundColor: Colors.BuyNow}]}>
-                  <Text style={[styles.gotocartText]}>{'Buy Now'}</Text>
+                  <Text style={[styles.gotocartText]} onPress={GotoBuyNow}>
+                    {'Buy Now'}
+                  </Text>
                 </View>
               </View>
             </Pressable>
@@ -171,6 +179,7 @@ const ProductDetails = () => {
                 (ele: Products) =>
                   ele.category == item.category && ele.id != item.id,
               )}
+              name={'productdetails'}
             />
           </View>
         </View>

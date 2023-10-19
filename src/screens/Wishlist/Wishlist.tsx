@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  FlatList,
+} from 'react-native';
 import ScreenTemplate from '../../components/ScreenTemplate';
 import DrawerIcon from '../../assets/SVGs/DrawerIcon.svg';
 import StylishLogo from '../../assets/SVGs/StylishLogo.svg';
@@ -19,6 +26,8 @@ import ReactNativeModal from 'react-native-modal';
 import {Images} from '../../helpers/images';
 import RadioGroup from 'react-native-radio-buttons-group';
 import {radioButtons} from '../../helpers/appData';
+import EmptyIllustrator from '../../components/EmptyIllustrator';
+import FilterComponent from '../../components/FilterComponent';
 
 const baseUrl = 'https://fakestoreapi.com/Wishlist';
 
@@ -26,7 +35,13 @@ const Wishlist = props => {
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
   const [filterData, setFilterData] = useState([]);
+
   const [filterModel, setFilterModel] = useState(false);
+  const [filterModel2, setFilterModel2] = useState(false);
+  const [selectedRating, setSelectedRating] = useState('');
+  const [selectedStock, setSelectedStock] = useState('');
+  const [newData, setNewData] = useState();
+
   const [selectedRadioId, setSelectedRadioId] = useState(undefined);
   const dispatch = useDispatch();
   const stateData = useSelector(state => state.Reducers);
@@ -37,25 +52,24 @@ const Wishlist = props => {
 
   useEffect(() => {
     // Check if the screen is refreshed (when refresh state is true)
-    if (refresh) {
-      console.log('Products---------------------', stateData.products);
 
-      setData(stateData.products);
-      setData2(stateData.products);
+    console.log('Products---------------------', stateData.products);
 
-      const ids = stateData.products.map(({category}) => category);
-      const tempData = stateData.products.filter(
-        ({category}, index) => !ids.includes(category, index + 1),
-      );
+    setData(stateData.products);
+    setData2(stateData.products);
 
-      console.log('--------------------tempData', tempData);
+    const ids = stateData.products.map(({category}) => category);
+    const tempData = stateData.products.filter(
+      ({category}, index) => !ids.includes(category, index + 1),
+    );
 
-      setFilterData(tempData);
+    console.log('--------------------tempData', tempData);
 
-      // Reset the refresh state after data is refreshed
-      setRefresh(false);
-    }
-  }, [refresh, stateData.products]);
+    setFilterData(tempData);
+
+    // Reset the refresh state after data is refreshed
+    setRefresh(false);
+  }, [refresh, data, newData, stateData.products]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -116,6 +130,108 @@ const Wishlist = props => {
       setSearch(text);
     }
   };
+
+  const RatingSelection = text => {
+    console.log('pppp', text);
+    setSelectedRating(text);
+  };
+  const renderFiveStar = ({item}) => {
+    return (
+      <Text
+        onPress={() => RatingSelection(item)}
+        style={selectedRating == item ? styles.FiveStar : styles.NonFiveStar}>
+        {item}⭐
+      </Text>
+    );
+  };
+  const StockSelection = text => {
+    console.log('pppp', text);
+    setSelectedStock(text);
+  };
+
+  const renderStock = ({item}) => {
+    return (
+      <Text
+        onPress={() => StockSelection(item)}
+        style={
+          selectedStock.toString().match(item)
+            ? styles.FiveStar
+            : styles.NonFiveStar
+        }>
+        {item}
+      </Text>
+    );
+  };
+
+  const ClearRating = () => {
+    setSelectedRating('');
+    setRefresh(!refresh);
+  };
+  const ClearStock = () => {
+    setSelectedStock('');
+    setRefresh(!refresh);
+  };
+
+  const handleFilter = () => {
+    console.log('FilterModel2 Called ---------- ');
+    setFilterModel2(true);
+    console.log('FilterModel2 ----------', filterModel2);
+  };
+
+  const ModalApplyButton = () => {
+    setFilterModel2(!filterModel2);
+
+    console.log('selectedRating------------', selectedRating);
+
+    console.log('datadata', data);
+
+    let stock1 = 0,
+      stock2 = 0;
+
+    if (selectedStock == 'out of stock') {
+      (stock1 = 0), (stock2 = 0);
+    } else if (selectedStock == '0 - 49') {
+      (stock1 = 0), (stock2 = 49);
+    } else if (selectedStock == '50 - 99') {
+      (stock1 = 50), (stock2 = 99);
+    } else {
+      (stock1 = 100), (stock2 = 500);
+    }
+
+    if (selectedRating && selectedStock) {
+      const tempData = data.filter(
+        ele =>
+          Math.round(ele.rating) == parseInt(selectedRating) &&
+          ele.stock > stock1 &&
+          ele.stock < stock2,
+      );
+
+      console.log('tempData-------------', tempData);
+      setNewData(tempData);
+
+      setRefresh(!refresh);
+    } else if (selectedRating && !selectedStock) {
+      const tempData = data.filter(
+        ele => Math.round(ele.rating) == parseInt(selectedRating),
+      );
+
+      console.log('tempData-------------', tempData);
+      setNewData(tempData);
+      setRefresh(!refresh);
+    } else if (selectedStock && !selectedRating) {
+      const tempData = data.filter(
+        ele => ele.stock > stock1 && ele.stock < stock2,
+      );
+
+      console.log('tempData-------------', tempData);
+      setNewData(tempData);
+      setRefresh(!refresh);
+    } else {
+      setNewData(data2);
+      setData(data2);
+    }
+  };
+
   return (
     <ScreenTemplate>
       <View style={styles.Header}>
@@ -135,23 +251,32 @@ const Wishlist = props => {
       <View style={styles.Features}>
         <View style={styles.AllFeaturedView}>
           <Text style={styles.AllFeatured}>
-            {data?.filter(item => item.fav == true).length}+ Items
+            {stateData.products?.filter(item => item.fav == true).length}+ Items
           </Text>
         </View>
         <TouchableOpacity style={styles.Sort} onPress={handleSort}>
           <Text>Sort</Text>
           <SortIcon />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.Filter}>
+        <TouchableOpacity style={styles.Filter} onPress={handleFilter}>
           <Text>Filter</Text>
           <FilterIcon />
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={{flex: 1}}>
-        <ProductsList
-          Data={stateData.products?.filter(item => item.fav == true)}
-        />
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+        {stateData.products?.filter(item => item.fav == true).length ? (
+          <ProductsList
+            // Data={stateData.products?.filter(item => item.fav == true)}
+            Data={
+              newData == undefined
+                ? data?.filter(item => item.fav == true)
+                : newData?.filter(item => item.fav == true)
+            }
+          />
+        ) : (
+          <EmptyIllustrator />
+        )}
       </ScrollView>
 
       {filterModel && (
@@ -177,6 +302,58 @@ const Wishlist = props => {
               selectedId={selectedRadioId}
               containerStyle={styles.RadioGroup}
             />
+          </View>
+        </ReactNativeModal>
+      )}
+      {filterModel2 && (
+        <ReactNativeModal
+          isVisible={filterModel2}
+          swipeDirection={'down'}
+          onSwipeComplete={() => setFilterModel2(!filterModel2)}
+          style={{
+            margin: 0,
+            backgroundColor: 'transparent',
+            justifyContent: 'flex-end',
+          }}>
+          <View style={styles.FilterModalView}>
+            <Text style={styles.FilterByText}>Filter by</Text>
+            <Text style={styles.RatingText}>rating</Text>
+            <FlatList
+              horizontal
+              data={[1, 2, 3, 4, 5]}
+              renderItem={renderFiveStar}
+              contentContainerStyle={styles.RatingView}
+              ListFooterComponent={
+                <TouchableOpacity
+                  style={styles.closeIconFilter}
+                  onPress={ClearRating}>
+                  <Image
+                    source={Images.closeIcon}
+                    style={styles.closeIconFilterImg}
+                  />
+                </TouchableOpacity>
+              }
+            />
+            <Text style={styles.StockText}>Stock</Text>
+            <FlatList
+              horizontal
+              data={['out of stock', '0 - 49', '50 - 99', '100 More']}
+              renderItem={renderStock}
+              contentContainerStyle={styles.RatingView}
+              ListFooterComponent={
+                <TouchableOpacity
+                  style={styles.closeIconFilter}
+                  onPress={ClearStock}>
+                  <Image
+                    source={Images.closeIcon}
+                    style={styles.closeIconFilterImg}
+                  />
+                </TouchableOpacity>
+              }
+            />
+            <TouchableOpacity onPress={ModalApplyButton}>
+              <Text style={styles.ApplyText}>Apply</Text>
+            </TouchableOpacity>
           </View>
         </ReactNativeModal>
       )}
@@ -498,5 +675,100 @@ const styles = StyleSheet.create({
     marginTop: hp(20),
     right: wp(10),
     padding: 0,
+  },
+  FilterModalView: {
+    height: hp(300),
+    width: '100%',
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: wp(20),
+  },
+  SortText: {
+    // fontWeight: 'bold',
+    fontSize: fs(20),
+    marginTop: hp(20),
+    // alignSelf: 'center',
+    color: Colors.Black,
+  },
+  FilterSortTextView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  closeIcon: {
+    height: hp(18),
+    width: wp(18),
+    marginTop: hp(20),
+  },
+  FilterByText: {
+    color: 'black',
+    // fontWeight: 'bold',
+    fontSize: 25,
+    marginTop: 30,
+    alignSelf: 'center',
+  },
+  ApplyText: {
+    color: 'black',
+    // fontWeight: 'bold',
+    fontSize: 15,
+    marginTop: 30,
+    alignSelf: 'center',
+    padding: 5,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.Green,
+    bottom: 10,
+    // color: 'white',
+    borderRadius: 10,
+  },
+  RatingText: {
+    marginTop: 15,
+    color: 'black',
+    fontSize: 18,
+    // marginLeft: 10,
+  },
+  StockText: {
+    // marginTop: -70,
+    color: 'black',
+    fontSize: 18,
+    // marginLeft: 10,
+  },
+  FiveStar: {
+    borderWidth: 1,
+    paddingHorizontal: 5,
+    borderRadius: 5,
+    color: 'white',
+    backgroundColor: Colors.Green,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 5,
+  },
+  RatingView: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    backgroundColor: 'white',
+    // borderWidth: 1,
+    marginVertical: 5,
+    height: 25,
+  },
+  NonFiveStar: {
+    borderWidth: 1,
+    paddingHorizontal: 5,
+    borderRadius: 5,
+    color: 'black',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 5,
+  },
+  closeIconFilter: {
+    // borderWidth: 1,
+    marginLeft: wp(5),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeIconFilterImg: {
+    height: hp(18),
+    width: wp(18),
   },
 });

@@ -24,6 +24,7 @@ export interface AuthTextInputProps {
 export interface ScreenTemplateProps {
   children: ReactNode;
   scroll?: boolean,
+  style?: ViewStyle,
 }
 
 export type Rating = {
@@ -45,4 +46,11 @@ export type Products = {
 export type AddressCards = {
   id: number,
   address: string,
+}
+
+export interface CustomDropdownProps {
+  items: number[];
+  selectedValue: string;
+  placeholder: string;
+  onValueChange: (value: string) => void;
 }

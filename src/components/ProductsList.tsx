@@ -12,17 +12,21 @@ import {fs, hp, wp} from '../helpers/ResponsiveFonts';
 import {Colors} from '../helpers/colors';
 import HeartIconBlack from '../assets/SVGs/WishlistIcons/HeartIconBlack.svg';
 import HeartIconFilled from '../assets/SVGs/WishlistIcons/HeartIconFilled.svg';
-import Mic from '../assets/SVGs/Mic.svg';
+import Starempty from '../assets/SVGs/Starempty.svg';
+import Starfilled from '../assets/SVGs/Starfilled.svg';
 import {Images} from '../helpers/images';
 import {FeatureType, ProductsListType} from '../helpers/appData';
 import Carousel from 'react-native-snap-carousel';
 import {Products} from '../helpers/interface';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {setProducts} from '../Store/Reducer';
+import Rating from './Rating';
+import EmptyIllustrator from './EmptyIllustrator';
 
 interface ProductsListProps {
   Data?: Array<Products>;
+  name?: string;
 }
 
 const ProductsList = (props: ProductsListProps) => {
@@ -31,11 +35,18 @@ const ProductsList = (props: ProductsListProps) => {
   const flatListRef = useRef<FlatList>(null);
   const [fav, setFav] = useState(false);
   const navigation = useNavigation();
+  const route = useRoute();
+  const name = route.params;
   const dispatch = useDispatch();
+
   const stateData = useSelector(state => state.Reducers);
 
   const ProductDetails = (item: Products) => {
-    navigation.replace('ProductDetails', {item});
+    // console.log('-------name', name);
+
+    props.name === 'productdetails'
+      ? navigation.replace('ProductDetails', {item})
+      : navigation.navigate('ProductDetails', {item});
   };
 
   const HeartSelection = (item: Products) => {
@@ -110,12 +121,16 @@ const ProductsList = (props: ProductsListProps) => {
           {/* <Text style={styles.DiscountText}>{item.Discount}%Off</Text> */}
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.Rating}>⭐⭐⭐⭐⭐</Text>
+          {/* <Text style={styles.Rating}>⭐⭐⭐⭐⭐</Text> */}
+          <Rating rating={item.rating} />
           <Text style={[styles.Rating, {fontSize: fs(14)}]}>
             {' '}
-            {item.ratingcount}
+            {item.rating}
           </Text>
         </View>
+        <Text style={[styles.DescText, {fontSize: fs(10)}]}>
+          Stock - {item.stock}
+        </Text>
       </Pressable>
     );
   };
@@ -132,6 +147,8 @@ const ProductsList = (props: ProductsListProps) => {
         numColumns={2}
         showsHorizontalScrollIndicator={false}
         ref={flatListRef}
+        bounces={false}
+        ListEmptyComponent={<EmptyIllustrator />}
       />
     </View>
   );
@@ -249,5 +266,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 1,
     alignSelf: 'flex-end',
+  },
+  EmptyBoxIllustrator: {
+    height: hp(100),
+    width: wp(100),
+  },
+  EmptyBoxIllustratorView: {
+    height: hp(500),
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

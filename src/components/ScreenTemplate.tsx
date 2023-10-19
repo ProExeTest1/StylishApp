@@ -20,13 +20,9 @@ const ScreenTemplate = (props: ScreenTemplateProps) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.ScrollView}>
-        <StatusBar
-          translucent={true}
-          backgroundColor={Colors.Background}
-          barStyle={'dark-content'}
-        />
+    <SafeAreaView style={[styles.container, props.style]}>
+      <View style={styles.View}>
+        {/* <Text>kkkk</Text> */}
         {props.children}
       </View>
     </SafeAreaView>
@@ -40,7 +36,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.Background,
   },
-  ScrollView: {
+  View: {
     flexGrow: 1,
     paddingVertical: hp(16),
     paddingHorizontal: wp(16),

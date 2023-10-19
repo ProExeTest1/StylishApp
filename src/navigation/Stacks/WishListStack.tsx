@@ -11,7 +11,7 @@ const Stack = createStackNavigator();
 const WishListStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Home"
+      initialRouteName="Wishlist"
       screenOptions={{
         headerShown: false,
         headerStyle: {

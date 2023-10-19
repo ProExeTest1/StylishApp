@@ -1,18 +1,33 @@
 import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
 
-interface SearchStackProps {}
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
+import Search from '../../screens/Search/Search';
 
-const SearchStack = (props: SearchStackProps) => {
+const Stack = createStackNavigator();
+
+const SearchStack = () => {
   return (
-    <View style={styles.container}>
-      <Text>SearchStack</Text>
-    </View>
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerShown: false,
+        headerStyle: {
+          backgroundColor: '#101010',
+        },
+        animationEnabled: false,
+        gestureEnabled: false,
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+        headerTintColor: '#ffd700',
+        ...TransitionPresets.SlideFromRightIOS,
+      }}>
+      <Stack.Screen
+        name="Search"
+        component={Search}
+        options={{title: 'Search'}}
+      />
+    </Stack.Navigator>
   );
 };
-
 export default SearchStack;
-
-const styles = StyleSheet.create({
-  container: {},
-});

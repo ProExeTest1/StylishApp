@@ -1,14 +1,10 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
   StyleSheet,
   TouchableOpacity,
-  TouchableHighlight,
-  Pressable,
   Image,
-  Platform,
-  BackHandler,
   FlatList,
 } from 'react-native';
 import ScreenTemplate from '../../components/ScreenTemplate';
@@ -20,89 +16,94 @@ import {fs, hp, wp} from '../../helpers/ResponsiveFonts';
 import {Colors} from '../../helpers/colors';
 import FilterIcon from '../../assets/SVGs/FilterIcon.svg';
 import SortIcon from '../../assets/SVGs/SortIcon.svg';
-import FeaturesComponent from '../../components/FeaturesComponent';
-
 import {setProducts} from '../../Store/Reducer';
 import {useDispatch, useSelector} from 'react-redux';
 import {Products} from '../../helpers/interface';
 import {ScrollView} from 'react-native-gesture-handler';
 import ProductsList from '../../components/ProductsList';
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import ReactNativeModal from 'react-native-modal';
 import {Images} from '../../helpers/images';
-import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
-import {radioButtons, radioButtons2} from '../../helpers/appData';
-import BackIcon from '../../assets/SVGs/BackIcon.svg';
+import RadioGroup from 'react-native-radio-buttons-group';
+import {radioButtons} from '../../helpers/appData';
+import EmptyIllustrator from '../../components/EmptyIllustrator';
+import FilterComponent from '../../components/FilterComponent';
 
-const baseUrl = 'https://fakestoreapi.com/ProductsScreen';
-interface ProductsScreenProps {}
+const baseUrl = 'https://fakestoreapi.com/Search';
 
-const ProductsScreen = (props: ProductsScreenProps) => {
+const Search = props => {
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
-  const [categoryData, setCategoryData] = useState([]);
   const [filterData, setFilterData] = useState([]);
-
-  const dispatch = useDispatch();
-  const stateData = useSelector(state => state.Reducers);
-  const navigation = useNavigation();
-  const route = useRoute();
-  const category = route.params?.category;
-  const [search, setSearch] = useState('');
-  const [refresh, setRefresh] = useState(false);
 
   const [filterModel, setFilterModel] = useState(false);
   const [filterModel2, setFilterModel2] = useState(false);
-  const [selectedRadioId, setSelectedRadioId] = useState<string | undefined>();
-  const [selectedRadioId2, setSelectedRadioId2] = useState<
-    string | undefined
-  >();
   const [selectedRating, setSelectedRating] = useState('');
   const [selectedStock, setSelectedStock] = useState('');
   const [newData, setNewData] = useState();
 
-  console.log('data------------', newData);
+  const [selectedRadioId, setSelectedRadioId] = useState(undefined);
+  const dispatch = useDispatch();
+  const stateData = useSelector(state => state.Reducers);
+  const [search, setSearch] = useState('');
+  const [refresh, setRefresh] = useState(false);
+
+  console.log('selectedRadioId------------', selectedRadioId);
+
+  useEffect(() => {
+    // Check if the screen is refreshed (when refresh state is true)
+    if (refresh) {
+      console.log('Products---------------------', stateData.products);
+
+      setData(stateData.products);
+      setData2(stateData.products);
+
+      const ids = stateData.products.map(({category}) => category);
+      const tempData = stateData.products.filter(
+        ({category}, index) => !ids.includes(category, index + 1),
+      );
+
+      console.log('--------------------tempData', tempData);
+
+      setFilterData(tempData);
+
+      // Reset the refresh state after data is refreshed
+      setRefresh(false);
+    }
+  }, [refresh, data, newData, stateData.products]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('Screen is focused');
+
+      // Your logic to update data here
+      setRefresh(true);
+
+      return () => {
+        console.log('Screen is unfocused');
+        setRefresh(false);
+      };
+    }, []),
+  );
 
   const handleSort = () => {
     setFilterModel(true);
   };
 
-  const handleFilter = () => {
-    console.log('FilterModel2 Called ---------- ');
-    setFilterModel2(true);
-    console.log('FilterModel2 ----------', filterModel2);
-  };
-
-  const handleRadio = (id: string) => {
+  const handleRadio = id => {
     setSelectedRadioId(id);
     setFilterModel(!filterModel);
 
     if (id == '1') {
-      let tempData = [...data];
-      tempData.sort((a: Products, b: Products) => b.price - a.price);
+      let tempData = [...stateData.products];
+      tempData.sort((a, b) => b.price - a.price);
       setData(tempData);
+      dispatch(setProducts(tempData));
     } else if (id == '2') {
-      let tempData = [...data];
-      tempData.sort((a: Products, b: Products) => a.price - b.price);
+      let tempData = [...stateData.products];
+      tempData.sort((a, b) => a.price - b.price);
       setData(tempData);
-    }
-  };
-  const handleRadio2 = (id: string) => {
-    setSelectedRadioId2(id);
-    setFilterModel2(!filterModel2);
-
-    if (id == '1') {
-      let tempData = [...data];
-      tempData.sort((a, b) => b.rating - a.rating);
-      setData(tempData);
-    } else if (id == '2') {
-      let tempData = [...data];
-      tempData.sort((a: Products, b: Products) => a.price - b.price);
-      setData(tempData);
+      dispatch(setProducts(tempData));
     }
   };
 
@@ -111,7 +112,7 @@ const ProductsScreen = (props: ProductsScreenProps) => {
     if (text) {
       // Inserted text is not blank
       // Filter the masterDataSource and update FilteredDataSource
-      const newData = data.filter(function (item: Products) {
+      const newData = stateData.products.filter(function (item: Products) {
         // Applying filter for the inserted text in search bar
         const itemData = item.title
           ? item.title.toUpperCase()
@@ -120,65 +121,37 @@ const ProductsScreen = (props: ProductsScreenProps) => {
         return itemData.indexOf(textData) > -1;
       });
       setData(newData);
+      dispatch(setProducts(newData));
       setSearch(text);
     } else {
       // Inserted text is blank
       // Update FilteredDataSource with masterDataSource
       setData(data2);
+      dispatch(setProducts(data2));
       setSearch(text);
     }
-  };
-  const ShowBottomTab = () => {
-    navigation.getParent()?.setOptions({
-      tabBarStyle: {
-        backgroundColor: Colors.white,
-        height: Platform.OS === 'ios' ? '11%' : '10%',
-        // justifyContent: 'center',
-        paddingBottom: Platform.OS === 'ios' ? 15 : 0,
-        borderTopColor: Colors.Transparent,
-        elevation: 2,
-        shadowOpacity: 0,
-
-        borderWidth: 1,
-      },
-    });
-  };
-  const GoBack = () => {
-    ShowBottomTab();
-    navigation.goBack();
-  };
-
-  const handleBackPress = () => {
-    ShowBottomTab();
-    return true;
   };
 
   const RatingSelection = text => {
     console.log('pppp', text);
     setSelectedRating(text);
   };
-
   const renderFiveStar = ({item}) => {
-    // console.log('99999-----------', item.category);
     return (
       <Text
         onPress={() => RatingSelection(item)}
         style={selectedRating == item ? styles.FiveStar : styles.NonFiveStar}>
         {item}⭐
       </Text>
-      // </View>
     );
   };
-
   const StockSelection = text => {
     console.log('pppp', text);
     setSelectedStock(text);
   };
 
   const renderStock = ({item}) => {
-    // console.log('99999-----------', item.category);
     return (
-      // <View style={styles.renderFilterSection}>
       <Text
         onPress={() => StockSelection(item)}
         style={
@@ -188,8 +161,22 @@ const ProductsScreen = (props: ProductsScreenProps) => {
         }>
         {item}
       </Text>
-      // </View>
     );
+  };
+
+  const ClearRating = () => {
+    setSelectedRating('');
+    setRefresh(!refresh);
+  };
+  const ClearStock = () => {
+    setSelectedStock('');
+    setRefresh(!refresh);
+  };
+
+  const handleFilter = () => {
+    console.log('FilterModel2 Called ---------- ');
+    setFilterModel2(true);
+    console.log('FilterModel2 ----------', filterModel2);
   };
 
   const ModalApplyButton = () => {
@@ -197,7 +184,6 @@ const ProductsScreen = (props: ProductsScreenProps) => {
 
     console.log('selectedRating------------', selectedRating);
 
-    // Math.round(ele.rating) == selectedRating
     console.log('datadata', data);
 
     let stock1 = 0,
@@ -223,8 +209,7 @@ const ProductsScreen = (props: ProductsScreenProps) => {
 
       console.log('tempData-------------', tempData);
       setNewData(tempData);
-      // dispatch(setProducts(tempData));
-      // setData(tempData);
+
       setRefresh(!refresh);
     } else if (selectedRating && !selectedStock) {
       const tempData = data.filter(
@@ -248,57 +233,14 @@ const ProductsScreen = (props: ProductsScreenProps) => {
     }
   };
 
-  const ClearRating = () => {
-    setSelectedRating('');
-    setRefresh(!refresh);
-  };
-  const ClearStock = () => {
-    setSelectedStock('');
-    setRefresh(!refresh);
-  };
-
-  useEffect(() => {
-    console.log('Products---------------------', stateData.products);
-
-    setData(stateData.products);
-    setData2(stateData.products);
-
-    setCategoryData(stateData.products);
-    const ids = stateData.products.map(({category}: Products) => category);
-    const tempData = stateData.products.filter(
-      ({category}: Products, index: number) => {
-        return !ids.includes(category, index + 1);
-      },
-    );
-
-    console.log('--------------------tempData', tempData);
-
-    // setFilterData([{ category: 'View All' }, ...tempData]);
-    setFilterData(tempData);
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      handleBackPress,
-    );
-    return () => backHandler.remove();
-
-    // const ids = books.map(({ title }) => title);
-    //     const filtered = books.filter(({ title }, index) =>
-    // !ids.includes(title, index + 1));
-  }, [refresh, stateData.products]);
-
   return (
     <ScreenTemplate>
       <View style={styles.Header}>
-        <TouchableOpacity style={styles.DrawerIcon} onPress={GoBack}>
-          <BackIcon />
+        <TouchableOpacity style={styles.DrawerIcon}>
+          <DrawerIcon />
         </TouchableOpacity>
         <View style={styles.StylishLogo}>
-          <Text style={styles.categoryheader}>
-            {category == 'ViewAll'
-              ? 'All Products'
-              : category[0].toUpperCase() + category.slice(1)}
-          </Text>
+          <StylishLogo />
         </View>
         <View style={styles.ProfilePic}>
           <ProfilePic />
@@ -310,42 +252,28 @@ const ProductsScreen = (props: ProductsScreenProps) => {
       <View style={styles.Features}>
         <View style={styles.AllFeaturedView}>
           <Text style={styles.AllFeatured}>
-            {category == 'ViewAll'
-              ? data.length
-              : newData == undefined
-              ? data?.filter((item, index) => item.category == category).length
-              : newData?.filter((item, index) => item.category == category)
-                  .length}
-            + Items
+            {stateData.products.length}+ Items
           </Text>
         </View>
-        <Pressable style={styles.Sort} onPress={handleSort}>
+        <TouchableOpacity style={styles.Sort} onPress={handleSort}>
           <Text>Sort</Text>
           <SortIcon />
-        </Pressable>
-        <Pressable style={styles.Filter} onPress={handleFilter}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.Filter} onPress={handleFilter}>
           <Text>Filter</Text>
           <FilterIcon />
-        </Pressable>
+        </TouchableOpacity>
       </View>
 
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-        <ProductsList
-          Data={
-            category == 'ViewAll'
-              ? data
-              : newData == undefined
-              ? data?.filter((item, index) => item.category == category)
-              : newData?.filter((item, index) => item.category == category)
-          }
-          //   {
-
-          //   (category == 'ViewAll')?
-          //   Data={data}:
-          // else
-          // Data={data?.filter((item, index) => item.category == category)}
-          //   }
-        />
+        {stateData.products?.length ? (
+          <ProductsList
+            // Data={stateData.products?.filter(item => item.fav == true)}
+            Data={newData == undefined ? data : newData}
+          />
+        ) : (
+          <EmptyIllustrator />
+        )}
       </ScrollView>
 
       {filterModel && (
@@ -361,9 +289,9 @@ const ProductsScreen = (props: ProductsScreenProps) => {
           <View style={styles.FilterModalView}>
             <View style={styles.FilterSortTextView}>
               <Text style={styles.SortText}>Sort</Text>
-              <Pressable onPress={() => setFilterModel(!filterModel)}>
+              <TouchableOpacity onPress={() => setFilterModel(!filterModel)}>
                 <Image source={Images.closeIcon} style={styles.closeIcon} />
-              </Pressable>
+              </TouchableOpacity>
             </View>
             <RadioGroup
               radioButtons={radioButtons}
@@ -374,7 +302,6 @@ const ProductsScreen = (props: ProductsScreenProps) => {
           </View>
         </ReactNativeModal>
       )}
-
       {filterModel2 && (
         <ReactNativeModal
           isVisible={filterModel2}
@@ -431,7 +358,7 @@ const ProductsScreen = (props: ProductsScreenProps) => {
   );
 };
 
-export default ProductsScreen;
+export default Search;
 
 const styles = StyleSheet.create({
   Header: {
@@ -723,11 +650,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(20),
   },
   SortText: {
+    color: 'black',
     // fontWeight: 'bold',
     fontSize: fs(20),
     marginTop: hp(20),
     // alignSelf: 'center',
-    color: Colors.Black,
   },
   FilterSortTextView: {
     flexDirection: 'row',
@@ -746,11 +673,30 @@ const styles = StyleSheet.create({
     right: wp(10),
     padding: 0,
   },
-  categoryheader: {
-    color: Colors.Black,
+  FilterModalView: {
+    height: hp(300),
+    width: '100%',
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: wp(20),
+  },
+  SortText: {
+    // fontWeight: 'bold',
     fontSize: fs(20),
-    fontWeight: '700',
-    fontFamily: 'Montserrat-Regular',
+    marginTop: hp(20),
+    // alignSelf: 'center',
+    color: Colors.Black,
+  },
+  FilterSortTextView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  closeIcon: {
+    height: hp(18),
+    width: wp(18),
+    marginTop: hp(20),
   },
   FilterByText: {
     color: 'black',
