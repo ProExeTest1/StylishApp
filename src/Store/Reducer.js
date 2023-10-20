@@ -7,6 +7,11 @@ const reducerSlice = createSlice({
     products: Products.products,
     cartarray: [],
     addresses: [],
+    email: '',
+    password: '',
+    bankAccNo: 0,
+    accHolderName: '',
+    IFSC: '',
     // mainAddress: [],
   },
   reducers: {
@@ -35,12 +40,34 @@ const reducerSlice = createSlice({
         state.addresses = temp;
       }
     },
+    setEmailRedux(state, action) {
+      state.email = action.payload;
+    },
+    setPasswordRedux(state, action) {
+      state.password = action.payload;
+    },
+    setBankAccNo(state, action) {
+      state.bankAccNo = action.payload;
+    },
+    setAccHolderName(state, action) {
+      state.accHolderName = action.payload;
+    },
+    setIFSC(state, action) {
+      state.IFSC = action.payload;
+    },
   },
 });
 
-export const {setProducts} = reducerSlice.actions;
-export const {setCartArray} = reducerSlice.actions;
-export const {setAddresses} = reducerSlice.actions;
-export const {setAddresses2} = reducerSlice.actions;
+export const {
+  setProducts,
+  setEmailRedux,
+  setPasswordRedux,
+  setBankAccNo,
+  setAccHolderName,
+  setIFSC,
+  setCartArray,
+  setAddresses,
+  setAddresses2,
+} = reducerSlice.actions;
 
 export default reducerSlice.reducer;

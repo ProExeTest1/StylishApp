@@ -112,4 +112,16 @@ export const TrendingProductsData : Array<ShoppingCardType> = [
         label: 'Rating',
         value: 'rating',
       },
-    ]
+  ]
+    
+  export type SettingsDataType= {
+      id: number,
+      title: string, 
+      description: string,
+      screenname: string
+}
+export const SettingsData : Array<SettingsDataType> = [
+    { id: 1, title: 'My orders', description: 'Already have 12 orders', screenname: 'Myorders' },
+    { id: 2, title: 'Shipping addresses', description: '3 addresses', screenname: 'Shippingaddresses' },
+    { id: 3, title: 'Settings', description: 'Notifications, password', screenname: 'SettingsProfile' },
+]

@@ -65,6 +65,7 @@ const AdsCard = (props: AdsCardProps) => {
       <SwiperFlatList
         autoplay
         autoplayLoop
+        autoplayDelay={5}
         data={props.Data}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}

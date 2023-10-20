@@ -24,6 +24,8 @@ import {
 import {AccessToken, LoginManager} from 'react-native-fbsdk-next';
 import {Images} from '../../helpers/images';
 import firestore from '@react-native-firebase/firestore';
+import {useDispatch, useSelector} from 'react-redux';
+import {setEmailRedux, setPasswordRedux} from '../../Store/Reducer';
 
 GoogleSignin.configure({
   webClientId:
@@ -36,6 +38,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [G_userInfo, setG_userInfo] = useState(null);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const stateData = useSelector(state => state.Reducers);
 
   const handleLogin = () => {
     let emailRegex =
@@ -50,6 +54,9 @@ const Login = () => {
       auth()
         .signInWithEmailAndPassword(email, password)
         .then(user => {
+          console.log('user----------------', user.user.email);
+          dispatch(setEmailRedux(user.user.email));
+          dispatch(setPasswordRedux(password));
           if (user) {
             navigation.navigate('MyTabs');
           }

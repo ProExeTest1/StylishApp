@@ -1,18 +1,40 @@
 import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
 
-interface SettingStackProps {}
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
+import Search from '../../screens/Search/Search';
+import SettingsScreen from '../../screens/Settings/SettingsScreen';
+import Myorders from '../../screens/Settings/Myorders';
+import Shippingaddresses from '../../screens/Settings/Shippingaddresses';
+import SettingsProfile from '../../screens/Settings/SettingsProfile';
 
-const SettingStack = (props: SettingStackProps) => {
+const Stack = createStackNavigator();
+
+const SettingStack = () => {
   return (
-    <View style={styles.container}>
-      <Text>SettingStack</Text>
-    </View>
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerShown: false,
+        headerStyle: {
+          backgroundColor: '#101010',
+        },
+        animationEnabled: false,
+        gestureEnabled: false,
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+        headerTintColor: '#ffd700',
+        ...TransitionPresets.SlideFromRightIOS,
+      }}>
+      <Stack.Screen
+        name="SettingsScreen"
+        component={SettingsScreen}
+        options={{title: 'SettingsScreen'}}
+      />
+      <Stack.Screen name="Myorders" component={Myorders} />
+      <Stack.Screen name="Shippingaddresses" component={Shippingaddresses} />
+      <Stack.Screen name="SettingsProfile" component={SettingsProfile} />
+    </Stack.Navigator>
   );
 };
-
 export default SettingStack;
-
-const styles = StyleSheet.create({
-  container: {},
-});

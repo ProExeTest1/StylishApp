@@ -17,7 +17,12 @@ import PasswordEyeHide from '../assets/SVGs/PasswordEyeHide.svg';
 import EmailIcon from '../assets/SVGs/EmailIcon.svg';
 
 const AuthTextInput = (props: AuthTextInputProps) => {
-  const [eye, setEye] = useState(true);
+  const [eye, setEye] = useState(false);
+
+  const handleEyeIcon = () => {
+    setEye(!eye);
+  };
+
   return (
     <View style={[styles.container, props.style]}>
       {/* <Image source={Images.user_icon} height={50} width={50} /> */}
@@ -43,20 +48,20 @@ const AuthTextInput = (props: AuthTextInputProps) => {
         keyboardType="email-address"
         autoCapitalize="none"
         onChangeText={props.onChangeText}
-        // secureTextEntry={true}
+        secureTextEntry={eye}
         multiline={false}
-        keyboardAppearance="default"
+        // keyboardAppearance="default"
 
         // passwordRules={}
         // value="abc"
       />
       {props.PasswordIcon ? (
         eye ? (
-          <TouchableOpacity onPress={() => setEye(false)}>
+          <TouchableOpacity onPress={handleEyeIcon}>
             <PasswordEye width={wp(24)} height={hp(24)} />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={() => setEye(true)}>
+          <TouchableOpacity onPress={handleEyeIcon}>
             <PasswordEyeHide width={wp(24)} height={hp(24)} />
           </TouchableOpacity>
         )

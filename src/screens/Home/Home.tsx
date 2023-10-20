@@ -42,6 +42,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
 import BackIcon from '../../assets/SVGs/BackIcon.svg';
 import {Images} from '../../helpers/images';
+import auth from '@react-native-firebase/auth';
 
 const baseUrl = 'https://dummyjson.com/products';
 interface HomeProps {}
@@ -52,6 +53,8 @@ const Home = (props: HomeProps) => {
   const [filterData, setFilterData] = useState([]);
   const dispatch = useDispatch();
   const stateData = useSelector(state => state.Reducers);
+  console.log('====>', stateData);
+
   const navigation = useNavigation();
   const today = new Date();
   const yesterday = new Date(today.setDate(today.getDate() - 1));
@@ -107,10 +110,16 @@ const Home = (props: HomeProps) => {
     // });
   }, []);
 
+  const Logout = () => {
+    auth()
+      .signOut()
+      .then(() => console.log('User signed out!'));
+  };
+
   return (
     <ScreenTemplate>
       <View style={styles.Header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={Logout}>
           <DrawerIcon />
         </TouchableOpacity>
         {/* <View style={styles.StylishLogo}> */}
@@ -120,14 +129,14 @@ const Home = (props: HomeProps) => {
           <ProfilePic />
         </View>
       </View>
-      <View style={styles.SearchComponent}>
+      {/* <View style={styles.SearchComponent}>
         <SearchComponent />
-      </View>
+      </View> */}
       <View style={styles.Features}>
         {/* <View style={styles.AllFeaturedView}> */}
         <Text style={styles.AllFeatured}>All Featured</Text>
         {/* </View> */}
-        <View style={{flexDirection: 'row'}}>
+        {/* <View style={{flexDirection: 'row'}}>
           <Pressable style={styles.Sort}>
             <Text>Sort</Text>
             <SortIcon />
@@ -136,7 +145,7 @@ const Home = (props: HomeProps) => {
             <Text>Filter</Text>
             <FilterIcon />
           </Pressable>
-        </View>
+        </View> */}
       </View>
 
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
@@ -193,7 +202,9 @@ const Home = (props: HomeProps) => {
             <Text style={styles.HeelsText2}>
               Stand a chance to get rewarded
             </Text>
-            <Pressable style={styles.Visitnow}>
+            <Pressable
+              style={styles.Visitnow}
+              onPress={() => handleDOD('smartphones')}>
               <Text style={styles.VisitnowText}>Visit now</Text>
               <RightArrow />
             </Pressable>
@@ -245,9 +256,7 @@ const Home = (props: HomeProps) => {
               style={[
                 styles.ViewAll,
                 {
-                  right: wp(25),
                   backgroundColor: Colors.Visitnow,
-                  borderColor: Colors.Visitnow,
                 },
               ]}
               onPress={() => handleDOD(`ViewAll`)}>
@@ -333,6 +342,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: fs(20),
     color: Colors.Black,
+    marginTop: hp(20),
   },
   FeaturesComponent: {
     marginTop: hp(17),
@@ -351,7 +361,7 @@ const styles = StyleSheet.create({
     marginVertical: hp(1),
     // backgroundColor: 'red',
     // borderWidth: 1,
-    height: hp(189),
+    height: hp(194),
     marginTop: hp(16),
     padding: hp(1.2),
   },
@@ -363,6 +373,8 @@ const styles = StyleSheet.create({
     paddingVertical: hp(8),
     paddingHorizontal: wp(8),
     borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   DOD1: {
     width: wp(234),
@@ -388,8 +400,8 @@ const styles = StyleSheet.create({
     paddingVertical: hp(6),
     borderRadius: 4,
     borderColor: Colors.white,
-    marginTop: hp(8),
-    marginLeft: wp(24),
+    // marginTop: hp(8),
+    // marginLeft: wp(24),
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',

@@ -5,6 +5,7 @@ import Login from '../../screens/auth/Login';
 import CreateAccount from '../../screens/auth/CreateAccount';
 import ForgetPass from '../../screens/auth/ForgetPass';
 import PhoneSignUp from '../../screens/auth/PhoneSignUp';
+import MyTabs from '../TabNavigator';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ const AuthStack = () => {
       <Stack.Screen name="CreateAccount" component={CreateAccount} />
       <Stack.Screen name="ForgetPass" component={ForgetPass} />
       <Stack.Screen name="PhoneSignUp" component={PhoneSignUp} />
+      <Stack.Screen name="MyTabs" component={MyTabs} />
     </Stack.Navigator>
   );
 };

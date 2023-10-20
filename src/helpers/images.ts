@@ -12,5 +12,7 @@ export const Images = {
     TrendingProducts: require('../assets/images/TrendingProducts.png'), 
     closeIcon: require('../assets/images/closeIcon.png'),
     EmptyBoxIllustrator: require('../assets/images/EmptyBoxIllustrator.jpeg'),
-    iphone: require('../assets/images/iphone.png'),
+    iphone: require('../assets/images/iphone.png'), 
+    StaticProfilePic: require('../assets/images/StaticProfilePic.jpg'),
+    pen: require('../assets/images/pen.png'),
 }

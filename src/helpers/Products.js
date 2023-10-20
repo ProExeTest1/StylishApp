@@ -40,6 +40,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/2/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 3,
@@ -55,6 +56,7 @@ export const Products = {
       thumbnail: 'https://i.dummyjson.com/data/products/3/thumbnail.jpg',
       images: ['https://i.dummyjson.com/data/products/3/1.jpg'],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 4,
@@ -75,6 +77,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/4/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 5,
@@ -94,6 +97,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/5/3.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 6,
@@ -114,6 +118,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/6/4.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 7,
@@ -134,6 +139,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/7/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 8,
@@ -155,6 +161,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/8/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 9,
@@ -176,6 +183,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/9/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 10,
@@ -196,6 +204,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/10/thumbnail.jpeg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 11,
@@ -216,6 +225,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/11/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 12,
@@ -236,6 +246,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/12/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 13,
@@ -257,6 +268,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/13/thumbnail.webp',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 14,
@@ -277,6 +289,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/14/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 15,
@@ -298,6 +311,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/15/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 16,
@@ -319,6 +333,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/16/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 17,
@@ -339,6 +354,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/17/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 18,
@@ -360,6 +376,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/18/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 19,
@@ -380,6 +397,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/19/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 20,
@@ -401,6 +419,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/20/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 21,
@@ -419,6 +438,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/21/3.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 22,
@@ -437,6 +457,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/22/3.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 23,
@@ -458,6 +479,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/23/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 24,
@@ -479,6 +501,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/24/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 25,
@@ -500,6 +523,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/25/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 26,
@@ -522,6 +546,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/26/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 27,
@@ -543,6 +568,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/27/thumbnail.webp',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 28,
@@ -564,6 +590,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/28/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 29,
@@ -585,6 +612,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/29/thumbnail.webp',
       ],
       fav: false,
+      ratingcount: 500,
     },
     {
       id: 30,
@@ -605,6 +633,7 @@ export const Products = {
         'https://i.dummyjson.com/data/products/30/thumbnail.jpg',
       ],
       fav: false,
+      ratingcount: 500,
     },
   ],
   total: 100,
