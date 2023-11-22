@@ -34,7 +34,7 @@ const ForgetPass = () => {
           navigation.navigate('Login');
         })
         .catch(error => {
-          alert('Unsucessful');
+          Alert.alert('Unsucessful');
         });
     }
   };
@@ -48,7 +48,7 @@ const ForgetPass = () => {
       <AuthTextInput
         placeholder={'Enter your email address'}
         EmailIcon={true}
-        style={{marginTop: hp(31)}}
+        // style={{marginTop: hp(31)}}
         onChangeText={text => setEmail(text)}
       />
 

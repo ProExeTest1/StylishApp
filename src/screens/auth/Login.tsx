@@ -25,7 +25,7 @@ import {AccessToken, LoginManager} from 'react-native-fbsdk-next';
 import {Images} from '../../helpers/images';
 import firestore from '@react-native-firebase/firestore';
 import {useDispatch, useSelector} from 'react-redux';
-import {setEmailRedux, setPasswordRedux} from '../../Store/Reducer';
+import {setEmailRedux, setPasswordRedux, setUID} from '../../Store/Reducer';
 
 GoogleSignin.configure({
   webClientId:
@@ -46,11 +46,13 @@ const Login = () => {
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     let passRegex = /^[a-zA-Z0-9!@#$%^&*]{6,16}$/;
 
-    if (!email.match(emailRegex))
+    if (!email.match(emailRegex)) {
       console.log('--------------------------Invalid Email');
-    else if (!password.match(passRegex))
+      Alert.alert('Invalid Email');
+    } else if (!password.match(passRegex)) {
       console.log('--------------------------Invalid password');
-    else {
+      Alert.alert('Invalid Password');
+    } else {
       auth()
         .signInWithEmailAndPassword(email, password)
         .then(user => {
@@ -58,6 +60,7 @@ const Login = () => {
           dispatch(setEmailRedux(user.user.email));
           dispatch(setPasswordRedux(password));
           if (user) {
+            dispatch(setUID(user.user.uid));
             navigation.navigate('MyTabs');
           }
         })
@@ -94,6 +97,7 @@ const Login = () => {
         'User Google Authentication Data -------------',
         G_UserInfo.user,
       );
+      dispatch(setUID(G_UserInfo.user.id));
       firestore()
         .collection('Users')
         .doc(`${G_UserInfo.user.id}`)
@@ -284,7 +288,7 @@ const styles = StyleSheet.create({
     fontSize: fs(14),
     fontWeight: '400',
     fontFamily: 'Montserrat-Regular',
-    marginTop: hp(75),
+    marginTop: hp(28),
   },
   Signup: {
     fontSize: fs(14),

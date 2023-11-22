@@ -17,7 +17,12 @@ import HeartIconFilled from '../../assets/SVGs/WishlistIcons/HeartIconFilled.svg
 import ScreenTemplate from '../../components/ScreenTemplate';
 import {fs, hp, wp} from '../../helpers/ResponsiveFonts';
 import {Colors} from '../../helpers/colors';
-import {setAddresses, setMainAddress, setProducts} from '../../Store/Reducer';
+import {
+  setAddresses,
+  setMainAddress,
+  setProducts,
+  setQty,
+} from '../../Store/Reducer';
 import ShoppingList from '../../components/ShoppingList';
 import {Products} from '../../helpers/interface';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -36,6 +41,8 @@ const ShoppingBag = () => {
   const [selectedValue, setSelectedValue] = useState(1);
   const today = new Date();
   const DeliveryDate = new Date(today.setDate(today.getDate() + 5));
+
+  console.log('item in shopping bag screen ------ ', item);
 
   useEffect(() => {
     const data = stateData.products;
@@ -57,6 +64,12 @@ const ShoppingBag = () => {
     ShowBottomTab();
     return true;
   };
+
+  const handleProceedPayTouch = () => {
+    navigation.navigate('Checkout', {item: item, Qty: selectedValue});
+    dispatch(setQty({id: item.id, Qty: selectedValue}));
+  };
+
   const ShowBottomTab = () => {
     navigation.getParent()?.setOptions({
       tabBarStyle: {
@@ -235,7 +248,9 @@ const ShoppingBag = () => {
           <Text style={styles.ViewDetailsPayment}>View Details</Text>
         </View>
         <View>
-          <TouchableOpacity style={styles.ProceedPayTouch}>
+          <TouchableOpacity
+            style={styles.ProceedPayTouch}
+            onPress={handleProceedPayTouch}>
             <Text style={styles.ProceedText}>Proceed to Payment</Text>
           </TouchableOpacity>
         </View>
@@ -304,7 +319,7 @@ const styles = StyleSheet.create({
     // shadowOffset: {width: 0, height: 0.3},
     // shadowOpacity: 0.3,
     // shadowRadius: 0.3,
-    zIndex: 0,
+    zIndex: -5,
     borderWidth: 0.5,
     borderColor: Colors.LightGrey,
     // marginTop: hp(18),

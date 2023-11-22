@@ -12,10 +12,10 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		156FF9580B3A4CC4DFD489BD /* libPods-StylishApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DB58450C0BEC4BE067D6677 /* libPods-StylishApp.a */; };
 		1D29CE0FE2CC4907B1D8A621 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1096EF73948E4A698DADE5C9 /* Montserrat-Bold.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		DE05F36F1F86290468186205 /* libPods-StylishApp-StylishAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0929A10920FF60E6E39764C /* libPods-StylishApp-StylishAppTests.a */; };
+		CF3375D6C14F46670617A805 /* Pods_StylishApp_StylishAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 854C7D2D0EF26698362A4C3B /* Pods_StylishApp_StylishAppTests.framework */; };
+		E4CC371A078559CFDB26E90D /* Pods_StylishApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBB92B42E01EEF7CBC4E25E2 /* Pods_StylishApp.framework */; };
 		F70AA34A71EC4D9F83E5CB83 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CE889F824DA745DDA68FCF40 /* Roboto-Regular.ttf */; };
 		FB64BB979DBF47D4950F22F9 /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6BB187DA0EA94AAB80DF48F6 /* Montserrat-Regular.ttf */; };
 /* End PBXBuildFile section */
@@ -47,11 +47,11 @@
 		5B7EB9410499542E8C5724F5 /* Pods-StylishApp-StylishAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StylishApp-StylishAppTests.debug.xcconfig"; path = "Target Support Files/Pods-StylishApp-StylishAppTests/Pods-StylishApp-StylishAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		6BB187DA0EA94AAB80DF48F6 /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Regular.ttf"; path = "../src/assets/fonts/Montserrat-Regular.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = StylishApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		854C7D2D0EF26698362A4C3B /* Pods_StylishApp_StylishAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_StylishApp_StylishAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-StylishApp-StylishAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StylishApp-StylishAppTests.release.xcconfig"; path = "Target Support Files/Pods-StylishApp-StylishAppTests/Pods-StylishApp-StylishAppTests.release.xcconfig"; sourceTree = "<group>"; };
-		8DB58450C0BEC4BE067D6677 /* libPods-StylishApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-StylishApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE889F824DA745DDA68FCF40 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Regular.ttf"; path = "../src/assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; };
+		EBB92B42E01EEF7CBC4E25E2 /* Pods_StylishApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_StylishApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F0929A10920FF60E6E39764C /* libPods-StylishApp-StylishAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-StylishApp-StylishAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DE05F36F1F86290468186205 /* libPods-StylishApp-StylishAppTests.a in Frameworks */,
+				CF3375D6C14F46670617A805 /* Pods_StylishApp_StylishAppTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,7 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				156FF9580B3A4CC4DFD489BD /* libPods-StylishApp.a in Frameworks */,
+				E4CC371A078559CFDB26E90D /* Pods_StylishApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,8 +109,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				8DB58450C0BEC4BE067D6677 /* libPods-StylishApp.a */,
-				F0929A10920FF60E6E39764C /* libPods-StylishApp-StylishAppTests.a */,
+				EBB92B42E01EEF7CBC4E25E2 /* Pods_StylishApp.framework */,
+				854C7D2D0EF26698362A4C3B /* Pods_StylishApp_StylishAppTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -618,6 +618,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
@@ -684,6 +692,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,

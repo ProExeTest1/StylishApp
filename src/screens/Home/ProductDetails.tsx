@@ -28,6 +28,7 @@ import {setCartArray} from '../../Store/Reducer';
 import GoToCartIcon from '../../assets/SVGs/GoToCartIcon.svg';
 import BuyNowIcon from '../../assets/SVGs/BuyNowIcon.svg';
 import BackIcon from '../../assets/SVGs/BackIcon.svg';
+import ProductImages from '../../components/ProductImages';
 
 const ProductDetails = () => {
   const [filterModel, setFilterModel] = useState(false);
@@ -67,18 +68,29 @@ const ProductDetails = () => {
     navigation.navigate('Checkout');
   };
   const GotoBuyNow = () => {
+    HideBottomTab();
     navigation.navigate('ShoppingBag', {item});
   };
-
+  const HideBottomTab = () => {
+    navigation.getParent()?.setOptions({
+      tabBarStyle: {
+        display: 'none',
+      },
+    });
+    return () =>
+      navigation.getParent()?.setOptions({
+        tabBarStyle: undefined,
+      });
+  };
   return (
     <ScreenTemplate>
       <View style={styles.Header}>
         <TouchableOpacity style={styles.DrawerIcon} onPress={Back}>
           <BackIcon />
         </TouchableOpacity>
-        <View style={styles.ProfilePic}>
+        <TouchableOpacity style={styles.ProfilePic} onPress={ViewCart}>
           <ShoppingKartIconBlack />
-        </View>
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -86,12 +98,16 @@ const ProductDetails = () => {
         showsVerticalScrollIndicator={false}>
         <View
           style={styles.renderItemContainer}
-          onPress={() => ProductDetails(item)}>
-          <Image
-            source={{uri: item.thumbnail}}
+          // onPress={() => ProductDetails(item)}
+        >
+          {/* <Image
+            source={{uri: item.images[1]}}
             resizeMode="contain"
             style={styles.ProductsListImage}
-          />
+          /> */}
+
+          <ProductImages Data={item.images} />
+
           <Text style={styles.TitleText}>{item.title}</Text>
           <Text style={styles.PriceText}>${item.price}</Text>
           <View style={styles.RatingContainer}>
@@ -116,7 +132,7 @@ const ProductDetails = () => {
                 </View>
               </View>
             </Pressable>
-            <Pressable>
+            <Pressable onPress={GotoBuyNow}>
               {/* <BuyNow /> */}
               <View style={[styles.GocartView]}>
                 <View
@@ -125,9 +141,7 @@ const ProductDetails = () => {
                 </View>
                 <View
                   style={[styles.cartbox, {backgroundColor: Colors.BuyNow}]}>
-                  <Text style={[styles.gotocartText]} onPress={GotoBuyNow}>
-                    {'Buy Now'}
-                  </Text>
+                  <Text style={[styles.gotocartText]}>{'Buy Now'}</Text>
                 </View>
               </View>
             </Pressable>
@@ -151,17 +165,19 @@ const ProductDetails = () => {
             </Pressable>
           </View>
 
-          <Text style={styles.SimilarToText}>Similar To</Text>
-          <View style={styles.SimilarToItemsView}>
-            <Text style={styles.SimilarToItemsText}>
+          <View style={styles.SimilarToTextView}>
+            <Text style={styles.SimilarToText}>Similar To</Text>
+            <Text style={styles.SimilarToText}>
               {stateData.products.filter(
                 (ele: Products) => ele.category == item.category,
               ).length - 1}
               {'+ '}
               Items
             </Text>
+          </View>
 
-            <View style={styles.Features}>
+          <View style={styles.SimilarToItemsView}>
+            {/* <View style={styles.Features}>
               <Pressable style={styles.Sort} onPress={handleSort}>
                 <Text>Sort</Text>
                 <SortIcon />
@@ -170,7 +186,7 @@ const ProductDetails = () => {
                 <Text>Filter</Text>
                 <FilterIcon />
               </Pressable>
-            </View>
+            </View> */}
           </View>
 
           <View style={styles.ProductList}>
@@ -207,7 +223,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     fontWeight: '500',
     fontSize: fs(20),
-    marginTop: hp(5),
+    marginTop: hp(35),
     color: Colors.Black,
   },
   PriceText: {
@@ -413,6 +429,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
     fontWeight: '600',
     fontSize: fs(16),
+  },
+  SimilarToTextView: {
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

@@ -31,20 +31,66 @@ import {
   setIFSC,
   setMainAddress,
   setPasswordRedux,
+  setProfilePhoto,
 } from '../../Store/Reducer';
 import firestore from '@react-native-firebase/firestore';
 import ReactNativeModal from 'react-native-modal';
 import {Images} from '../../helpers/images';
 import SettingsComponent from '../../components/SettingsComponent';
 import SettingsTextInput from '../../components/SettingsTextInput';
+import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
+import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
 
 const SettingsProfile = () => {
   const navigation = useNavigation();
   const stateData = useSelector(state => state.Reducers);
   const dispatch = useDispatch();
+  let image: ImageOrVideo = Images.StaticProfilePic;
+  const [profilepic, setProfilepic] = useState(image);
+  const [passwordFlag, setPasswordFlag] = useState(true);
 
   const Back = () => {
     navigation.goBack();
+  };
+  const ProfileImageChange = () => {
+    console.log('ProfileImageChange--------------');
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then(image => {
+      console.log(image);
+      setProfilepic(image);
+      StoreProfilePic(image.path);
+      dispatch(setProfilePhoto(image.path));
+    });
+  };
+
+  const StoreProfilePic = uri => {
+    console.log('-----StoreProfilePic-----------');
+    const storageRef = storage().ref();
+    // Path where the image will be stored in Firebase Storage
+    const path = 'Images/profile.png';
+    // Local filesystem path to the image file
+    const localFilePath = uri;
+    // Upload the image file to Firebase Storage
+    const uploadTask = storageRef.child(path).putFile(localFilePath);
+    // Listen for state changes, errors, and completion of the upload.
+    uploadTask.on(
+      'state_changed',
+      taskSnapshot => {
+        console.log(
+          `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
+        );
+      },
+      error => {
+        console.log(error.message);
+      },
+      () => {
+        console.log('Image uploaded successfully.');
+      },
+    );
   };
 
   const handleSavebutton = () => {
@@ -57,25 +103,53 @@ const SettingsProfile = () => {
 
     let IFSCRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/;
 
+    let ProfileObj = {
+      email: stateData.email,
+      password: stateData.password,
+      bankAccNo: stateData.bankAccNo,
+      accHolderName: stateData.accHolderName,
+      IFSC: stateData.IFSC,
+    };
+
     if (stateData.email.match(emailregex)) {
-      if (stateData.password.match(passwordregex)) {
-        if (stateData.bankAccNo.match(bankregex)) {
-          if (stateData.accHolderName != '') {
-            if (stateData.IFSC.match(IFSCRegex)) {
-            } else {
-              Alert.alert('Invalid IFSC Code');
-            }
+      if (stateData.bankAccNo.match(bankregex)) {
+        if (stateData.accHolderName != '') {
+          if (stateData.IFSC.match(IFSCRegex)) {
+            firestore()
+              .collection('Users')
+              .doc(`Profile-${auth()?.currentUser?.uid}`)
+              .set(ProfileObj)
+              .then(() => {
+                console.log('Profile Data added!');
+                // FirestoreGet(); // Fetch updated data after adding a new user
+              });
+
+            navigation.navigate('SettingsScreen');
           } else {
-            Alert.alert(`Invalid Account Holder's Name`);
+            Alert.alert('Invalid IFSC Code');
           }
         } else {
-          Alert.alert('Invalid Bank Account Number');
+          Alert.alert(`Invalid Account Holder's Name`);
         }
       } else {
-        Alert.alert('Invalid Password!');
+        Alert.alert('Invalid Bank Account Number');
       }
     } else {
       Alert.alert('Invalid Email');
+    }
+  };
+
+  const ChangePassword = () => {
+    // setPasswordFlag(false);
+    forgotPassword(stateData.email);
+  };
+
+  const forgotPassword = async (email: string) => {
+    try {
+      await auth().sendPasswordResetEmail(email);
+      Alert.alert('Password reset email sent!');
+    } catch (error) {
+      Alert.alert(error.message);
     }
   };
 
@@ -97,11 +171,17 @@ const SettingsProfile = () => {
         <View style={{flexDirection: 'row'}}>
           <View style={styles.StaticProfilePicView}>
             <Image
-              source={Images.StaticProfilePic}
+              source={
+                stateData.profilePhoto === ''
+                  ? Images.StaticProfilePic
+                  : {uri: stateData.profilePhoto}
+              }
               style={styles.StaticProfilePic}
             />
           </View>
-          <TouchableOpacity style={styles.penTouch}>
+          <TouchableOpacity
+            onPress={ProfileImageChange}
+            style={styles.penTouch}>
             <Image source={Images.pen} style={styles.pen} />
           </TouchableOpacity>
         </View>
@@ -123,13 +203,17 @@ const SettingsProfile = () => {
           <SettingsTextInput
             title="Password"
             placeholder="Enter Password"
-            secureTextEntry={true}
+            // secureTextEntry={passwordFlag}
+            editable={false}
             value={stateData.password}
             onChangeText={text => {
               dispatch(setPasswordRedux(text));
             }}
+            PasswordIcon={true}
           />
-          <Text style={styles.chnagepasstext}>Change Password</Text>
+          <Text style={styles.chnagepasstext} onPress={ChangePassword}>
+            Change Password
+          </Text>
           <View style={styles.HRLine} />
           {/* <Text style={styles.settingHeader}>Business Address Details</Text>
           <SettingsTextInput title="Pincode" placeholder="Enter Pincode" />

@@ -12,7 +12,11 @@ const reducerSlice = createSlice({
     bankAccNo: 0,
     accHolderName: '',
     IFSC: '',
-    // mainAddress: [],
+    UID: '',
+    myorders: [],
+    profilePhoto: '',
+    Qty: [{id: 0, Qty: 1}],
+    profileData: {},
   },
   reducers: {
     setProducts(state, action) {
@@ -55,6 +59,21 @@ const reducerSlice = createSlice({
     setIFSC(state, action) {
       state.IFSC = action.payload;
     },
+    setUID(state, action) {
+      state.UID = action.payload;
+    },
+    setMyorders(state, action) {
+      state.myorders = action.payload;
+    },
+    setProfilePhoto(state, action) {
+      state.profilePhoto = action.payload;
+    },
+    setQty(state, action) {
+      state.Qty = [...state.Qty, action.payload];
+    },
+    setProfileData(state, action) {
+      state.profileData = action.payload;
+    },
   },
 });
 
@@ -68,6 +87,11 @@ export const {
   setCartArray,
   setAddresses,
   setAddresses2,
+  setUID,
+  setMyorders,
+  setProfilePhoto,
+  setQty,
+  setProfileData,
 } = reducerSlice.actions;
 
 export default reducerSlice.reducer;

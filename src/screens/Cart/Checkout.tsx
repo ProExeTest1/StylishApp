@@ -9,6 +9,7 @@ import {
   FlatList,
   Image,
   Alert,
+  ImageBackground,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -17,22 +18,31 @@ import EditIcon from '../../assets/SVGs/EditIcon.svg';
 import PlusIcon from '../../assets/SVGs/PlusIcon.svg';
 import VisacardIcon from '../../assets/SVGs/VisacardIcon.svg';
 import BackIcon from '../../assets/SVGs/BackIcon.svg';
+import RightTick from '../../assets/SVGs/RightTick.svg';
 import {fs, hp, wp} from '../../helpers/ResponsiveFonts';
 import {Colors} from '../../helpers/colors';
 import ScreenTemplate from '../../components/ScreenTemplate';
 import ShoppingList from '../../components/ShoppingList';
 import {AddressCards, Products} from '../../helpers/interface';
-import {setAddresses, setAddresses2, setMainAddress} from '../../Store/Reducer';
+import {
+  setAddresses,
+  setAddresses2,
+  setMainAddress,
+  setMyorders,
+} from '../../Store/Reducer';
 import firestore from '@react-native-firebase/firestore';
 import ReactNativeModal from 'react-native-modal';
 import {Images} from '../../helpers/images';
+import auth from '@react-native-firebase/auth';
 
 const Checkout = () => {
   const [filterModel, setFilterModel] = useState(false);
+  const [filterModel2, setFilterModel2] = useState(false);
   const dispatch = useDispatch();
   const stateData = useSelector(state => state.Reducers);
   const route = useRoute();
-  const item = route.params?.item;
+  const item = route?.params?.item;
+  const Qty = route?.params?.Qty;
   const navigation = useNavigation();
   const [filterData, setFilterData] = useState([]);
   const [addressCards, setAddressCards] = useState([{}]);
@@ -47,6 +57,8 @@ const Checkout = () => {
   const [streetname, setStreetName] = useState('');
   const [pin, setPin] = useState('');
   const [city, setCity] = useState('');
+
+  console.log('item in Checkout screen ------ ', item);
 
   useEffect(() => {
     const data = stateData.products;
@@ -68,9 +80,13 @@ const Checkout = () => {
 
   let priceCount = 0;
 
-  const priceArray = stateData.cartarray.map((item: Products) => {
-    return (priceCount += item.price);
-  });
+  const priceArray = item
+    ? [item].map((item: Products) => {
+        return (priceCount += item.price);
+      })
+    : stateData.cartarray.map((item: Products) => {
+        return (priceCount += item.price);
+      });
 
   const ContinueAddress = () => {
     let Numreg = /^\d+$/;
@@ -94,6 +110,18 @@ const Checkout = () => {
     else if (!pin.match(Numreg)) Alert.alert('Enter valid Pincode');
     else {
       dispatch(setAddresses(passData));
+
+      firestore()
+        .collection('Users')
+        .doc(`Addresses-${auth()?.currentUser?.uid}`)
+        .set({
+          ...[...stateData.addresses, passData.data],
+        })
+        .then(() => {
+          console.log('Addresses added!');
+          // FirestoreGet(); // Fetch updated data after adding a new user
+        });
+
       setCity('');
       setFlatNum('');
       setPin('');
@@ -114,6 +142,18 @@ const Checkout = () => {
     setStreetName('');
     setFilterModel(false);
   };
+
+  const closeModal2 = () => {
+    console.log('close');
+    setModalId(0);
+    setCity('');
+    setFlatNum('');
+    setPin('');
+    setSocName('');
+    setStreetName('');
+    setFilterModel2(false);
+  };
+
   console.log('stateData.addresses', stateData.addresses);
 
   const handleAddress = item => {
@@ -127,6 +167,51 @@ const Checkout = () => {
     setStreetName(item?.streetName);
     setFilterModel(true);
   };
+
+  const handleContinueButton = () => {
+    setFilterModel2(true);
+    if (item) {
+      const dataArray = [...stateData.myorders];
+      // const dataArray2 = dataArray;
+      // dataArray.push(item);
+      const dataArray2 = [item].concat(dataArray);
+      console.log('dataArray-----------', dataArray2);
+
+      dispatch(setMyorders(dataArray2));
+
+      firestore()
+        .collection('Users')
+        .doc(`myorders-${auth()?.currentUser?.uid}`)
+        .set({
+          ...dataArray2,
+        })
+        .then(() => {
+          console.log('myorders Data added!');
+          // FirestoreGet(); // Fetch updated data after adding a new user
+        });
+    } else {
+      const dataArray = [...stateData.myorders];
+      dispatch(setMyorders([...stateData.cartarray, ...stateData.myorders]));
+      firestore()
+        .collection('Users')
+        .doc(`myorders-${auth()?.currentUser?.uid}`)
+        .set({
+          ...[...stateData.cartarray, ...stateData.myorders],
+        })
+        .then(() => {
+          console.log('myorders Data added!');
+          // FirestoreGet(); // Fetch updated data after adding a new user
+        });
+    }
+  };
+
+  const CloseTouch = () => {
+    item
+      ? navigation.navigate('ShoppingBag', {item: item})
+      : setFilterModel2(false);
+    navigation.goBack();
+  };
+
   return (
     <ScreenTemplate>
       <View style={styles.header}>
@@ -142,7 +227,7 @@ const Checkout = () => {
         <View />
       </View>
 
-      {stateData.cartarray.length > 0 ? (
+      {stateData.cartarray.length > 0 || item ? (
         <ScrollView
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}>
@@ -167,7 +252,7 @@ const Checkout = () => {
                       <EditIcon />
                     </TouchableOpacity>
                     <Text style={styles.addressText}>Address :</Text>
-                    <Text>
+                    <Text style={styles.addressContainedText}>
                       {item?.flatNo} {item?.societyName} {item?.streetName}{' '}
                       {item?.city},{item?.pin}
                     </Text>
@@ -189,11 +274,17 @@ const Checkout = () => {
 
           <Text style={styles.ShoppingListText}>Shopping List</Text>
 
-          <ShoppingList Data={stateData.cartarray} />
+          <ShoppingList Data={item ? [item] : stateData.cartarray} />
+          {/* <ShoppingList
+            Data={item ? stateData.cartarray : stateData.cartarray}
+          /> */}
+
           <View style={styles.OrderTotalView}>
             <View style={styles.OrderView}>
               <Text style={styles.OrderText}>Order</Text>
-              <Text style={styles.OrderText}>${priceCount}</Text>
+              <Text style={styles.OrderText}>
+                ${Qty ? priceCount * Qty : priceCount}
+              </Text>
             </View>
             <View style={styles.OrderView}>
               <Text style={styles.OrderText}>Shipping</Text>
@@ -204,7 +295,7 @@ const Checkout = () => {
                 Total
               </Text>
               <Text style={[styles.OrderText, {color: Colors.Black}]}>
-                ${priceCount + 5}
+                ${Qty ? priceCount * Qty + 5 : priceCount + 5}
               </Text>
             </View>
           </View>
@@ -220,7 +311,9 @@ const Checkout = () => {
               <Text style={styles.OrderText}>{`******5307`}</Text>
             </View>
           ))}
-          <TouchableOpacity style={styles.ContinueComponent}>
+          <TouchableOpacity
+            style={styles.ContinueComponent}
+            onPress={handleContinueButton}>
             <Text style={styles.ContinueText}>Continue</Text>
           </TouchableOpacity>
         </ScrollView>
@@ -268,7 +361,7 @@ const Checkout = () => {
                 value={socname}
               />
               <TextInput
-                placeholder="Stree Name / Landmark"
+                placeholder="Street Name / Landmark"
                 placeholderTextColor={Colors.LightGrey}
                 style={styles.FlatNum}
                 onChangeText={text => setStreetName(text)}
@@ -299,6 +392,33 @@ const Checkout = () => {
           </View>
         </ReactNativeModal>
       )}
+
+      {filterModel2 && (
+        <ReactNativeModal
+          isVisible={filterModel2}
+          swipeDirection={'down'}
+          onSwipeComplete={closeModal2}
+          style={{
+            backgroundColor: 'transparent',
+            justifyContent: 'center',
+          }}>
+          <View style={styles.FilterModalView2}>
+            <TouchableOpacity style={styles.closeTouch} onPress={CloseTouch}>
+              <Image source={Images.closeIcon} style={styles.closeIconStyle} />
+            </TouchableOpacity>
+            <ImageBackground
+              source={Images.PaymentDone}
+              style={styles.PaymentDone}
+              // tintColor={Colors.ForgetPass}
+            >
+              <RightTick />
+            </ImageBackground>
+            <Text style={styles.paymentDoneText}>
+              Payment done successfully
+            </Text>
+          </View>
+        </ReactNativeModal>
+      )}
     </ScreenTemplate>
   );
 };
@@ -319,13 +439,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  // drawerIcon: {width: '38%'},
-  // profilePic: {
-  //   // width: '100%',
-  //   // position: 'absolute',
-  //   alignItems: 'center',
-  //   // backgroundColor: 'red',
-  // },
   scrollView: {flex: 1, marginTop: hp(10)},
   addressCard: {
     paddingVertical: hp(12),
@@ -519,6 +632,42 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  FilterModalView2: {
+    height: hp(221),
+    width: '100%',
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    borderRadius: 6,
+    paddingHorizontal: wp(20),
+  },
+  PaymentDone: {
+    height: hp(91),
+    width: wp(91),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paymentDoneText: {
+    fontFamily: 'Montserrat-Regular',
+    fontWeight: '600',
+    fontSize: fs(14),
+    color: Colors.Black,
+  },
+  closeIconStyle: {
+    height: hp(15),
+    width: wp(15),
+  },
+  closeTouch: {
+    // borderWidth: 1,
+    width: '100%',
+  },
+  addressContainedText: {
+    fontFamily: 'Montserrat-Regular',
+    fontWeight: '400',
+    fontSize: fs(12),
+    color: Colors.Black,
+    marginBottom: hp(4),
   },
 });
 

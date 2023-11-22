@@ -28,6 +28,7 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import {radioButtons} from '../../helpers/appData';
 import EmptyIllustrator from '../../components/EmptyIllustrator';
 import FilterComponent from '../../components/FilterComponent';
+import ProfileView from '../../components/ProfileView';
 
 const baseUrl = 'https://fakestoreapi.com/Wishlist';
 
@@ -242,7 +243,7 @@ const Wishlist = props => {
           <StylishLogo />
         </View>
         <View style={styles.ProfilePic}>
-          <ProfilePic />
+          <ProfileView />
         </View>
       </View>
       <View style={styles.SearchComponent}>
@@ -351,7 +352,9 @@ const Wishlist = props => {
                 </TouchableOpacity>
               }
             />
-            <TouchableOpacity onPress={ModalApplyButton}>
+            <TouchableOpacity
+              style={styles.ModalApplyButton}
+              onPress={ModalApplyButton}>
               <Text style={styles.ApplyText}>Apply</Text>
             </TouchableOpacity>
           </View>
@@ -676,31 +679,6 @@ const styles = StyleSheet.create({
     right: wp(10),
     padding: 0,
   },
-  FilterModalView: {
-    height: hp(300),
-    width: '100%',
-    backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingHorizontal: wp(20),
-  },
-  SortText: {
-    // fontWeight: 'bold',
-    fontSize: fs(20),
-    marginTop: hp(20),
-    // alignSelf: 'center',
-    color: Colors.Black,
-  },
-  FilterSortTextView: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  closeIcon: {
-    height: hp(18),
-    width: wp(18),
-    marginTop: hp(20),
-  },
   FilterByText: {
     color: 'black',
     // fontWeight: 'bold',
@@ -770,5 +748,8 @@ const styles = StyleSheet.create({
   closeIconFilterImg: {
     height: hp(18),
     width: wp(18),
+  },
+  ModalApplyButton: {
+    bottom: hp(15),
   },
 });

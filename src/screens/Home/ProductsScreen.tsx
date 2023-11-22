@@ -37,6 +37,7 @@ import {Images} from '../../helpers/images';
 import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
 import {radioButtons, radioButtons2} from '../../helpers/appData';
 import BackIcon from '../../assets/SVGs/BackIcon.svg';
+import ProfileView from '../../components/ProfileView';
 
 const baseUrl = 'https://fakestoreapi.com/ProductsScreen';
 interface ProductsScreenProps {}
@@ -301,7 +302,7 @@ const ProductsScreen = (props: ProductsScreenProps) => {
           </Text>
         </View>
         <View style={styles.ProfilePic}>
-          <ProfilePic />
+          <ProfileView />
         </View>
       </View>
       <View style={styles.SearchComponent}>
@@ -421,7 +422,9 @@ const ProductsScreen = (props: ProductsScreenProps) => {
                 </TouchableOpacity>
               }
             />
-            <TouchableOpacity onPress={ModalApplyButton}>
+            <TouchableOpacity
+              style={styles.ModalApplyButton}
+              onPress={ModalApplyButton}>
               <Text style={styles.ApplyText}>Apply</Text>
             </TouchableOpacity>
           </View>
@@ -821,5 +824,8 @@ const styles = StyleSheet.create({
   closeIconFilterImg: {
     height: hp(18),
     width: wp(18),
+  },
+  ModalApplyButton: {
+    bottom: hp(15),
   },
 });

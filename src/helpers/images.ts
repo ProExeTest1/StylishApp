@@ -15,4 +15,7 @@ export const Images = {
     iphone: require('../assets/images/iphone.png'), 
     StaticProfilePic: require('../assets/images/StaticProfilePic.jpg'),
     pen: require('../assets/images/pen.png'),
+    PaymentDone: require('../assets/images/PaymentDone.png'),
+    LeftArrow: require('../assets/images/LeftArrow.png'),
+    RightArrow: require('../assets/images/RightArrow.png'),
 }

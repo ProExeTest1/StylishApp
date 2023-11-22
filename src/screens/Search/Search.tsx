@@ -28,6 +28,7 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import {radioButtons} from '../../helpers/appData';
 import EmptyIllustrator from '../../components/EmptyIllustrator';
 import FilterComponent from '../../components/FilterComponent';
+import ProfileView from '../../components/ProfileView';
 
 const baseUrl = 'https://fakestoreapi.com/Search';
 
@@ -243,7 +244,7 @@ const Search = props => {
           <StylishLogo />
         </View>
         <View style={styles.ProfilePic}>
-          <ProfilePic />
+          <ProfileView />
         </View>
       </View>
       <View style={styles.SearchComponent}>
@@ -348,7 +349,9 @@ const Search = props => {
                 </TouchableOpacity>
               }
             />
-            <TouchableOpacity onPress={ModalApplyButton}>
+            <TouchableOpacity
+              style={styles.ModalApplyButton}
+              onPress={ModalApplyButton}>
               <Text style={styles.ApplyText}>Apply</Text>
             </TouchableOpacity>
           </View>
@@ -648,6 +651,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: wp(20),
+    // paddingBottom: hp(40),
   },
   SortText: {
     color: 'black',
@@ -706,7 +710,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   ApplyText: {
-    color: 'black',
+    color: Colors.white,
     // fontWeight: 'bold',
     fontSize: 15,
     marginTop: 30,
@@ -767,5 +771,8 @@ const styles = StyleSheet.create({
   closeIconFilterImg: {
     height: hp(18),
     width: wp(18),
+  },
+  ModalApplyButton: {
+    bottom: hp(15),
   },
 });

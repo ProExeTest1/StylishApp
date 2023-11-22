@@ -42,6 +42,11 @@ export const AdsCardsData : Array<AdsCardsType> = [
     { Image: Images.AdsCard, category: 'fragrances' },
 ]
 
+export type ProductImagesType = {
+    Images?: Image;
+}
+
+
 export type ShoppingCardType= {
     Image?: Image,
     Title?: string,

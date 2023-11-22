@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     fontSize: fs(14),
     fontWeight: '400',
     fontFamily: 'Montserrat-Regular',
-    marginTop: hp(75),
+    marginTop: hp(28),
   },
   Signup: {
     fontSize: fs(14),

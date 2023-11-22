@@ -6,11 +6,14 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Righticon from '../assets/SVGs/Righticon.svg';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
 
 interface SettingsComponentProps {}
 
 const SettingsComponent = (props: SettingsComponentProps) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const stateData = useSelector(state => state.Reducers);
 
   const GotoScreen = (text: string) => {
     navigation.navigate(text);
@@ -23,7 +26,13 @@ const SettingsComponent = (props: SettingsComponentProps) => {
         onPress={() => GotoScreen(item.screenname)}>
         <View style={styles.titledescriptionview}>
           <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.description}>{item.description}</Text>
+          <Text style={styles.description}>
+            {item.title == 'My orders'
+              ? `Already have ${stateData.myorders.length} orders`
+              : item.title == 'Shipping addresses'
+              ? `${stateData.addresses.length} addresses`
+              : `Notifications, password`}
+          </Text>
         </View>
         <TouchableOpacity>
           <Righticon />
@@ -39,6 +48,8 @@ const SettingsComponent = (props: SettingsComponentProps) => {
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         extraData={SettingsData}
+        contentContainerStyle={styles.flatlistStyle}
+        scrollEnabled={false}
       />
     </View>
   );
@@ -47,7 +58,9 @@ const SettingsComponent = (props: SettingsComponentProps) => {
 export default SettingsComponent;
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    // height: 400,
+  },
   renderItem: {
     // borderBottomWidth: 0.3,
 
@@ -83,4 +96,8 @@ const styles = StyleSheet.create({
     color: Colors.Grey,
   },
   titledescriptionview: {},
+  flatlistStyle: {
+    // height: 300,
+    // borderWidth: 1,
+  },
 });

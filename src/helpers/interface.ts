@@ -21,6 +21,17 @@ export interface AuthTextInputProps {
   CountryCode?: string,
   CountryPress?: () => void;
 }
+
+export interface SettingsTextInputProps {
+  title?: string;
+  onChangeText?: ((text: string) => void) | undefined;
+  placeholder?: string;
+  secureTextEntry?: boolean;
+  value?: string;
+  PasswordIcon?: boolean;
+  editable?: boolean;
+}
+
 export interface ScreenTemplateProps {
   children: ReactNode;
   scroll?: boolean,
@@ -38,7 +49,7 @@ export type Products = {
   price: number,
   description: string,
   category: string,
-  thumbnail: ImageProps,
+  thumbnail: String,
   rating: Rating, 
   fav: boolean,
 }

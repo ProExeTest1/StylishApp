@@ -53,7 +53,11 @@ const SettingsScreen = () => {
       <View style={styles.ProfileNameViewContainer}>
         <View style={styles.StaticProfilePicView}>
           <Image
-            source={Images.StaticProfilePic}
+            source={
+              stateData.profilePhoto === ''
+                ? Images.StaticProfilePic
+                : {uri: stateData.profilePhoto}
+            }
             style={styles.StaticProfilePic}
           />
         </View>

@@ -2,6 +2,7 @@ import React from 'react';
 
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import Search from '../../screens/Search/Search';
+import SettingsScreen from '../../screens/Settings/SettingsScreen';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,7 @@ const SearchStack = () => {
         component={Search}
         options={{title: 'Search'}}
       />
+      <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
     </Stack.Navigator>
   );
 };

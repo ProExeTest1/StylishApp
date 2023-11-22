@@ -28,7 +28,7 @@ interface ShoppingCardProps {
 
 const ShoppingCard = (props: ShoppingCardProps) => {
   const [index, setIndex] = useState(2);
-  const [swipeIcon, setSwipeIcon] = useState('>');
+  const [swipeIcon, setSwipeIcon] = useState(Images.RightArrow);
   const flatListRef = useRef<FlatList>(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -39,11 +39,11 @@ const ShoppingCard = (props: ShoppingCardProps) => {
     if (index < props.Data?.filter((item, index) => index < 4)?.length) {
       setIndex(index + 2);
       if (index + 2 >= props.Data?.filter((item, index) => index < 4)?.length)
-        setSwipeIcon('<');
+        setSwipeIcon(Images.LeftArrow);
       flatListRef?.current?.scrollToIndex({index: index});
     } else {
       setIndex(2);
-      setSwipeIcon('>');
+      setSwipeIcon(Images.RightArrow);
       flatListRef?.current?.scrollToIndex({index: 0});
     }
   };
@@ -68,9 +68,11 @@ const ShoppingCard = (props: ShoppingCardProps) => {
   };
 
   useEffect(() => {
-    const tempArray = stateData.products
-      ?.filter(ele => ele.fav === true)
-      .map(ele => ele.id);
+    const tempArray = stateData.products.map(ele => {
+      if (ele.fav === true) {
+        return ele.id;
+      }
+    });
 
     setHearts(tempArray);
   }, [stateData.products]);
@@ -128,7 +130,8 @@ const ShoppingCard = (props: ShoppingCardProps) => {
         bounces={false}
       />
       <TouchableOpacity style={styles.Button} onPress={ShoppingSwipe}>
-        <Text>{swipeIcon}</Text>
+        {/* <Text>{swipeIcon}</Text> */}
+        <Image source={swipeIcon} style={styles.swipeIconStyle} />
       </TouchableOpacity>
     </View>
   );
@@ -234,8 +237,12 @@ const styles = StyleSheet.create({
     right: wp(10),
   },
   HeartSelection: {
-    position: 'absolute',
+    // position: 'absolute',
     zIndex: 1,
     alignSelf: 'flex-end',
+  },
+  swipeIconStyle: {
+    height: hp(14),
+    width: wp(14),
   },
 });

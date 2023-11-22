@@ -35,7 +35,13 @@ import TrendingProductsCard from '../../components/TrendingProductsCard';
 import HotSummerSale from '../../assets/SVGs/HotSummerSale.svg';
 import Sponsered from '../../assets/SVGs/Sponsered.svg';
 import axios from 'axios';
-import {setProducts} from '../../Store/Reducer';
+import {
+  setAddresses,
+  setMyorders,
+  setProducts,
+  setProfileData,
+  setProfilePhoto,
+} from '../../Store/Reducer';
 import {useDispatch, useSelector} from 'react-redux';
 import {Products} from '../../helpers/interface';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -43,6 +49,9 @@ import {useNavigation} from '@react-navigation/native';
 import BackIcon from '../../assets/SVGs/BackIcon.svg';
 import {Images} from '../../helpers/images';
 import auth from '@react-native-firebase/auth';
+import ProfileView from '../../components/ProfileView';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 
 const baseUrl = 'https://dummyjson.com/products';
 interface HomeProps {}
@@ -93,6 +102,9 @@ const Home = (props: HomeProps) => {
     // });
     // console.log('dataArray----------------', dataArray);
 
+    getProfileImage();
+    getFirebaseData();
+
     const dataArray = stateData.products;
 
     // dispatch(setProducts(dataArray));
@@ -116,6 +128,35 @@ const Home = (props: HomeProps) => {
       .then(() => console.log('User signed out!'));
   };
 
+  const getProfileImage = async () => {
+    const ImageProfile = await storage()
+      ?.ref()
+      ?.child('Images/profile.png')
+      ?.getDownloadURL();
+    ImageProfile
+      ? dispatch(setProfilePhoto(ImageProfile))
+      : dispatch(setProfilePhoto(Images.StaticProfilePic));
+  };
+
+  const getFirebaseData = async () => {
+    const Addresses = await firestore()
+      .collection('Users')
+      .doc(`Addresses-${auth()?.currentUser?.uid}`)
+      .get();
+    const myorders = await firestore()
+      .collection('Users')
+      .doc(`myorders-${auth()?.currentUser?.uid}`)
+      .get();
+    const Profile = await firestore()
+      .collection('Users')
+      .doc(`Profile-${auth()?.currentUser?.uid}`)
+      .get();
+
+    dispatch(setAddresses(Addresses));
+    dispatch(setMyorders(myorders));
+    dispatch(setProfileData(Profile));
+  };
+
   return (
     <ScreenTemplate>
       <View style={styles.Header}>
@@ -125,9 +166,7 @@ const Home = (props: HomeProps) => {
         {/* <View style={styles.StylishLogo}> */}
         <StylishLogo />
         {/* </View> */}
-        <View>
-          <ProfilePic />
-        </View>
+        <ProfileView />
       </View>
       {/* <View style={styles.SearchComponent}>
         <SearchComponent />
@@ -568,5 +607,10 @@ const styles = StyleSheet.create({
   HeelsPhoto: {
     height: hp(100),
     width: wp(100),
+  },
+  ProfilePic: {
+    height: hp(40),
+    width: wp(40),
+    borderRadius: 20,
   },
 });

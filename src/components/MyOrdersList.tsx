@@ -10,13 +10,6 @@ import {
 } from 'react-native';
 import {fs, hp, wp} from '../helpers/ResponsiveFonts';
 import {Colors} from '../helpers/colors';
-import HeartIconBlack from '../assets/SVGs/WishlistIcons/HeartIconBlack.svg';
-import HeartIconFilled from '../assets/SVGs/WishlistIcons/HeartIconFilled.svg';
-import Starempty from '../assets/SVGs/Starempty.svg';
-import Starfilled from '../assets/SVGs/Starfilled.svg';
-import {Images} from '../helpers/images';
-import {FeatureType, ProductsListType} from '../helpers/appData';
-import Carousel from 'react-native-snap-carousel';
 import {Products} from '../helpers/interface';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -24,12 +17,12 @@ import {setProducts} from '../Store/Reducer';
 import Rating from './Rating';
 import EmptyIllustrator from './EmptyIllustrator';
 
-interface ProductsListProps {
+interface MyOrdersListProps {
   Data?: Array<Products>;
   name?: string;
 }
 
-const ProductsList = (props: ProductsListProps) => {
+const MyOrdersList = (props: MyOrdersListProps) => {
   const [index, setIndex] = useState(2);
   const [hearts, setHearts] = useState([]);
   const flatListRef = useRef<FlatList>(null);
@@ -40,45 +33,6 @@ const ProductsList = (props: ProductsListProps) => {
   const dispatch = useDispatch();
 
   const stateData = useSelector(state => state.Reducers);
-
-  const ProductDetails = (item: Products) => {
-    // console.log('-------name', name);
-
-    props.name === 'productdetails'
-      ? navigation.replace('ProductDetails', {item})
-      : navigation.navigate('ProductDetails', {item});
-  };
-
-  const HeartSelection = (item: Products) => {
-    const updatedProducts = stateData.products.map((ele: Products) => {
-      if (ele.id === item.id) {
-        const updatedEle = Object.assign({}, ele); // Create a new object by copying properties
-        updatedEle.fav = !updatedEle.fav; // Update the 'fav' property
-        if (hearts.includes(item.id)) {
-          const tempArray = hearts.filter(heart => heart != item.id);
-          setHearts(tempArray);
-        } else setHearts([...hearts, item.id]);
-        return updatedEle;
-      } else {
-        return ele;
-      }
-    });
-
-    // if (item.fav == true) {
-    //   setFav(false);
-    // } else {
-    //   setFav(true);
-    // }
-
-    dispatch(setProducts(updatedProducts));
-
-    console.log(
-      'updatedProducts in Products List ------------------------- ',
-      updatedProducts,
-    );
-
-    // navigation.replace('ProductsScreen', {category: item.category});
-  };
 
   useEffect(() => {
     const tempArray = stateData.products
@@ -93,44 +47,50 @@ const ProductsList = (props: ProductsListProps) => {
   }, [stateData.products]);
 
   const renderItem = ({item}: {item: Products}) => {
+    console.log('item in renderItem in SettingsScreen ----- ', item);
+
     return (
       <Pressable
         style={styles.renderItemContainer}
         onPress={() => ProductDetails(item)}>
-        <TouchableOpacity
-          style={styles.HeartSelection}
-          onPress={() => HeartSelection(item)}>
-          {hearts.includes(item.id) || item.fav == true ? (
-            <HeartIconFilled />
-          ) : (
-            <HeartIconBlack />
-          )}
-        </TouchableOpacity>
-        <Image
-          source={{uri: item.thumbnail}}
-          resizeMode="contain"
-          style={styles.ProductsListImage}
-        />
-        <Text style={styles.TitleText}>{item.title.substring(0, 50)}...</Text>
-        <Text style={styles.DescText}>
-          {item.description.substring(0, 70)}...
-        </Text>
-        <Text style={styles.PriceText}>${item.price}</Text>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {/* <Text style={styles.MRPText}>₹{item.MRP}</Text> */}
-          {/* <Text style={styles.DiscountText}>{item.Discount}%Off</Text> */}
+        <View>
+          {/* <TouchableOpacity
+            style={styles.HeartSelection}
+            onPress={() => HeartSelection(item)}>
+            {hearts.includes(item.id) || item.fav == true ? (
+              <HeartIconFilled />
+            ) : (
+              <HeartIconBlack />
+            )}
+          </TouchableOpacity> */}
+          <Image
+            source={{uri: item.thumbnail}}
+            resizeMode="contain"
+            style={styles.MyOrdersListImage}
+          />
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {/* <Text style={styles.Rating}>⭐⭐⭐⭐⭐</Text> */}
-          <Rating rating={item.rating} />
-          <Text style={[styles.Rating, {fontSize: fs(14)}]}>
-            {' '}
-            {item.rating}
+        <View style={styles.ItemDesc}>
+          <Text style={styles.TitleText}>{item.title.substring(0, 50)}...</Text>
+          <Text style={styles.DescText}>
+            {item.description.substring(0, 70)}...
+          </Text>
+          <Text style={styles.PriceText}>${item.price}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {/* <Text style={styles.MRPText}>₹{item.MRP}</Text> */}
+            {/* <Text style={styles.DiscountText}>{item.Discount}%Off</Text> */}
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {/* <Text style={styles.Rating}>⭐⭐⭐⭐⭐</Text> */}
+            <Rating rating={item.rating} />
+            <Text style={[styles.Rating, {fontSize: fs(14)}]}>
+              {' '}
+              {item.rating}
+            </Text>
+          </View>
+          <Text style={[styles.DescText, {fontSize: fs(10)}]}>
+            Qty - {stateData.Qty.find(ele => ele.id === item.id)?.Qty || 0}
           </Text>
         </View>
-        <Text style={[styles.DescText, {fontSize: fs(10)}]}>
-          Stock - {item.stock}
-        </Text>
       </Pressable>
     );
   };
@@ -144,7 +104,7 @@ const ProductsList = (props: ProductsListProps) => {
         contentContainerStyle={styles.FlatListStyle}
         // horizontal
         scrollEnabled={false}
-        numColumns={2}
+        numColumns={1}
         showsHorizontalScrollIndicator={false}
         ref={flatListRef}
         bounces={false}
@@ -154,7 +114,7 @@ const ProductsList = (props: ProductsListProps) => {
   );
 };
 
-export default ProductsList;
+export default MyOrdersList;
 
 const styles = StyleSheet.create({
   container: {},
@@ -169,18 +129,18 @@ const styles = StyleSheet.create({
     marginBottom: hp(12),
     // borderWidth: 0.17,
     height: 'auto',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    backgroundColor: Colors.white,
-    paddingVertical: hp(10),
-    paddingHorizontal: wp(10),
+    flexDirection: 'row',
+    // backgroundColor: 'red',
+    justifyContent: 'space-between',
+    // elevation: 2,
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.2,
+    // shadowRadius: 2,
   },
-  ProductsListImage: {
+  MyOrdersListImage: {
     height: hp(167),
-    width: wp(150),
+    width: wp(170),
     // borderWidth: 1,
   },
   FeatureText: {
@@ -266,7 +226,7 @@ const styles = StyleSheet.create({
     right: wp(10),
   },
   HeartSelection: {
-    // position: 'absolute',
+    position: 'absolute',
     zIndex: 1,
     alignSelf: 'flex-end',
   },
@@ -279,5 +239,8 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  ItemDesc: {
+    marginLeft: wp(10),
   },
 });

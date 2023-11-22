@@ -27,7 +27,7 @@ interface TrendingProductsCardProps {
 
 const TrendingProductsCard = (props: TrendingProductsCardProps) => {
   const [index, setIndex] = useState(2);
-  const [swipeIcon, setSwipeIcon] = useState('>');
+  const [swipeIcon, setSwipeIcon] = useState(Images.RightArrow);
   const flatListRef = useRef<FlatList>(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -38,11 +38,11 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
     if (index < props.Data?.filter((item, index) => index < 4)?.length) {
       setIndex(index + 2);
       if (index + 2 >= props.Data?.filter((item, index) => index < 4)?.length)
-        setSwipeIcon('<');
+        setSwipeIcon(Images.LeftArrow);
       flatListRef?.current?.scrollToIndex({index: index});
     } else {
       setIndex(2);
-      setSwipeIcon('>');
+      setSwipeIcon(Images.RightArrow);
       flatListRef?.current?.scrollToIndex({index: 0});
     }
   };
@@ -123,7 +123,8 @@ const TrendingProductsCard = (props: TrendingProductsCardProps) => {
         bounces={false}
       />
       <TouchableOpacity style={styles.Button} onPress={ShoppingSwipe}>
-        <Text>{swipeIcon}</Text>
+        {/* <Text>{swipeIcon}</Text> */}
+        <Image source={swipeIcon} style={styles.swipeIconStyle} />
       </TouchableOpacity>
     </View>
   );
@@ -229,8 +230,12 @@ const styles = StyleSheet.create({
     right: wp(10),
   },
   HeartSelection: {
-    position: 'absolute',
+    // position: 'absolute',
     zIndex: 1,
     alignSelf: 'flex-end',
+  },
+  swipeIconStyle: {
+    height: hp(14),
+    width: wp(14),
   },
 });

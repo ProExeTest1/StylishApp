@@ -23,6 +23,8 @@ import {
 import {Images} from '../../helpers/images';
 import {AccessToken, LoginManager} from 'react-native-fbsdk-next';
 import firestore from '@react-native-firebase/firestore';
+import {setUID} from '../../Store/Reducer';
+import {useDispatch, useSelector} from 'react-redux';
 
 const CreateAccount = () => {
   const [email, setEmail] = useState('');
@@ -30,6 +32,8 @@ const CreateAccount = () => {
   const [confirmPassword, setconfirmPassword] = useState('');
   const [G_userInfo, setG_userInfo] = useState(null);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const stateData = useSelector(state => state.Reducers);
 
   const handleCreateAccount = () => {
     let emailRegex =
@@ -42,6 +46,7 @@ const CreateAccount = () => {
           auth()
             .createUserWithEmailAndPassword(email, password)
             .then(user => {
+              dispatch(setUID(user.user.uid));
               console.log('User Authentication Data -------------', user.user);
               firestore()
                 .collection('Users')
@@ -80,6 +85,7 @@ const CreateAccount = () => {
         'User Google Authentication Data -------------',
         G_UserInfo.user,
       );
+      dispatch(setUID(G_UserInfo.user.id));
       firestore()
         .collection('Users')
         .doc(`${G_UserInfo.user.id}`)
